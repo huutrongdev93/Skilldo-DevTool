@@ -26,13 +26,20 @@
   --dvt-primary-2: #e39388;
   --dvt-primary-bg: #fff5f2;
   --dvt-border-color: rgba(72, 110, 149, 0.14);
-  --dvt-width: 550px;
+  --dvt-width: 600px;
   --dvt-font: 'Roboto Mono', monospace;
+  --dvt-blue: #0e2194;
+  --dvt-red: #751d1d;
+  --dv-method-post: #ad760d;
+  --dv-method-get: #2a6e23;
+  --dv-method-delete: #9d2929;
+  --dv-method-put: #73622b;
+  --dv-method-path: #73622b;
+  --dv-method-head: var(--dvt-color);
   width: var(--dvt-width);
   right: calc(-1*var(--dvt-width));
   z-index: 999;
   position: fixed;
-  top: 0;
   height: 100vh;
   background-color: var(--dvt-bg);
   color: var(--dvt-color);
@@ -100,6 +107,7 @@
 .devTools-sidebar .devTools-sidebar-body h4 {
   font-size: 1rem;
   font-weight: bold;
+  margin-bottom: 0;
 }
 .devTools-sidebar .devTools-sidebar-body .box {
   --bs-card-spacer-y: 1rem;
@@ -424,52 +432,17 @@
 .devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .query .query-sql span {
   font-family: var(--dvt-font) !important;
 }
+.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .query .query-sql .highlight-keyword {
+  color: var(--dvt-blue);
+}
+.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .query .query-sql .highlight-variable {
+  color: var(--dvt-red);
+}
 .devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .query .query-time {
   color: var(--dvt-color);
 }
 .devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .query:nth-child(2n) {
   background-color: var(--dvt-primary-bg);
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row {
-  display: flex;
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column {
-  font-family: var(--dvt-font);
-  flex: 0 0 auto;
-  width: 100%;
-  padding: 7px 15px;
-  text-align: left;
-  line-height: 1.5;
-  font-size: 12px !important;
-  color: var(--dvt-color);
-  background: var(--dvt-bg) !important;
-  border-bottom: 1px dotted var(--dvt-border-color);
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column span,
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column p {
-  white-space: nowrap;
-  overflow-wrap: break-word;
-  word-break: break-all;
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column .highlight {
-  color: #FFFD70 !important;
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column .faded {
-  color: #aaa !important;
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column .small {
-  font-size: 10px;
-  letter-spacing: 1px;
-  font-weight: lighter;
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column-4 {
-  width: 40%;
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row .profiler-column-6 {
-  width: 60%;
-}
-.devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler .profiler-table .profiler-row:hover .profiler-column {
-  background: var(--dvt-primary-bg) !important;
 }
 .devTools-sidebar #codeigniter_wrap_profiler #codeigniter_profiler table {
   width: 100%;
@@ -492,12 +465,134 @@
   letter-spacing: 1px;
   font-weight: lighter;
 }
+.devTools-sidebar .profiler-table .profiler-row {
+  display: flex;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column {
+  font-family: var(--dvt-font);
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 7px 15px;
+  text-align: left;
+  line-height: 1.5;
+  font-size: 12px !important;
+  color: var(--dvt-color);
+  background: var(--dvt-bg) !important;
+  border-bottom: 1px dotted var(--dvt-border-color);
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column span,
+.devTools-sidebar .profiler-table .profiler-row .profiler-column p {
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column .highlight {
+  color: #FFFD70 !important;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column .faded {
+  color: #aaa !important;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column .small {
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: lighter;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column-2 {
+  width: 20%;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column-3 {
+  width: 30%;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column-4 {
+  width: 40%;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column-5 {
+  width: 50%;
+}
+.devTools-sidebar .profiler-table .profiler-row .profiler-column-6 {
+  width: 60%;
+}
+.devTools-sidebar .profiler-table .profiler-row:hover .profiler-column {
+  background: var(--dvt-primary-bg) !important;
+}
+.devTools-sidebar .highlight-method-post {
+  color: var(--dv-method-post);
+}
+.devTools-sidebar .highlight-method-get {
+  color: var(--dv-method-get);
+}
+.devTools-sidebar .highlight-method-delete {
+  color: var(--dv-method-delete);
+}
+.devTools-sidebar .highlight-method-put {
+  color: var(--dv-method-put);
+}
+.devTools-sidebar .highlight-method-path {
+  color: var(--dv-method-path);
+}
+.devTools-sidebar .highlight-method-head {
+  color: var(--dv-method-head);
+}
+.devTools-sidebar .opacity-0 {
+  opacity: 0;
+}
+.devTools-sidebar .opacity-30 {
+  opacity: 0.3;
+}
+.devTools-sidebar .opacity-40 {
+  opacity: 0.4;
+}
+.devTools-sidebar .opacity-50 {
+  opacity: 0.5;
+}
+.devTools-sidebar .opacity-60 {
+  opacity: 0.6;
+}
+.devTools-sidebar .opacity-80 {
+  opacity: 0.8;
+}
+.devTools-sidebar .opacity-90 {
+  opacity: 0.9;
+}
 .devTools-sidebar.dark {
   --dvt-bg: #151f2c;
-  --dvt-color: #6c7a91;
-  --dvt-primary-bg: #182433;
+  --dvt-color: #a1abbd;
+  --dvt-primary-bg: #1f2e41;
+  --dvt-blue: #5879f1;
+  --dvt-red: #f58686;
+  --dv-method-post: #e89e0f;
+  --dv-method-get: #51e342;
+  --dv-method-delete: #ea2323;
+  --dv-method-put: #987b1c;
+  --dv-method-path: #987b1c;
+  --dv-method-head: var(--dvt-color);
 }
 .devTools-sidebar.dark .devTools-sidebar-body .box {
   --bs-card-bg: #232f3d;
+}
+.devTools-sidebar.vertical-right {
+  top: 0;
+}
+.devTools-sidebar.vertical-right .tab-content {
+  height: calc(100% - 60px);
+}
+.devTools-sidebar.horizontal {
+  --dvt-width: 100%;
+  height: 400px;
+  bottom: 0;
+}
+.devTools-sidebar.horizontal .devTools-sidebar-body {
+  height: 100%;
+  padding-bottom: 0;
+}
+.devTools-sidebar.horizontal .devTools-btn-action {
+  position: absolute;
+  z-index: 9999;
+  right: 20px;
+  top: 5px;
+}
+.devTools-sidebar.horizontal .tab-content {
+  height: calc(100% - 80px);
 }
 /*# sourceMappingURL=devtool.css.map */

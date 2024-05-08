@@ -6,12 +6,20 @@
     --dvt-primary-2: #e39388;
     --dvt-primary-bg:#fff5f2;
     --dvt-border-color:rgba(72,110,149,.14);
-    --dvt-width:550px;
+    --dvt-width:600px;
     --dvt-font:'Roboto Mono', monospace;
+    --dvt-blue: #0e2194;
+    --dvt-red: #751d1d;
+    --dv-method-post: #ad760d;
+    --dv-method-get: #2a6e23;
+    --dv-method-delete: #9d2929;
+    --dv-method-put: #73622b;
+    --dv-method-path:#73622b;
+    --dv-method-head:var(--dvt-color);
     width: var(--dvt-width);
     right: ~"calc(-1*var(--dvt-width))";
     z-index: 999;
-    position: fixed; top: 0;
+    position: fixed;
     height: 100vh;
     background-color: var(--dvt-bg);
     color: var(--dvt-color);
@@ -81,6 +89,7 @@
         h4 {
             font-size:1rem;
             font-weight:bold;
+            margin-bottom: 0;
         }
         .box {
             --bs-card-spacer-y: 1rem;
@@ -289,7 +298,6 @@
         padding: 10px 23px 10px 23px;
         margin-bottom: 0;
     }
-
     .hook-list {
         overflow: hidden;
         .hook-header {
@@ -318,7 +326,6 @@
             }
         }
     }
-
     #codeigniter_wrap_profiler {
         font-size: 12px;
         font-weight: 400;
@@ -385,6 +392,12 @@
                     span {
                         font-family: var(--dvt-font) !important;
                     }
+                    .highlight-keyword {
+                        color: var(--dvt-blue);
+                    }
+                    .highlight-variable {
+                        color: var(--dvt-red);
+                    }
                 }
                 .query-time {
                     color: var(--dvt-color);
@@ -392,41 +405,6 @@
             }
             .query:nth-child(2n) {
                 background-color: var(--dvt-primary-bg);
-            }
-
-            .profiler-table {
-                .profiler-row {
-                    display:flex;
-                    .profiler-column {
-                        font-family: var(--dvt-font);
-                        flex: 0 0 auto;
-                        width:100%;
-                        padding: 7px 15px;
-                        text-align: left;
-                        line-height: 1.5;
-                        font-size: 12px !important;
-                        color: var(--dvt-color);
-                        background: var(--dvt-bg) !important;
-                        border-bottom: 1px dotted var(--dvt-border-color);
-                        span, p {
-                            white-space:nowrap;
-                            overflow-wrap: break-word;
-                            word-break: break-all;
-                        }
-                        .highlight { color: #FFFD70 !important; }
-                        .faded { color: #aaa !important; }
-                        .small { font-size: 10px; letter-spacing: 1px; font-weight: lighter; }
-                        &-4 {
-                            width:40%;
-                        }
-                        &-6 {
-                            width:60%;
-                        }
-                    }
-                    &:hover {
-                        .profiler-column { background: var(--dvt-primary-bg) !important; }
-                    }
-                }
             }
 
             table {
@@ -440,16 +418,134 @@
             }
         }
     }
-
+    .profiler-table {
+        .profiler-row {
+            display:flex;
+            .profiler-column {
+                font-family: var(--dvt-font);
+                flex: 0 0 auto;
+                width:100%;
+                padding: 7px 15px;
+                text-align: left;
+                line-height: 1.5;
+                font-size: 12px !important;
+                color: var(--dvt-color);
+                background: var(--dvt-bg) !important;
+                border-bottom: 1px dotted var(--dvt-border-color);
+                overflow-wrap: break-word;
+                word-break: break-all;
+                span, p {
+                    overflow-wrap: break-word;
+                    word-break: break-all;
+                }
+                .highlight { color: #FFFD70 !important; }
+                .faded { color: #aaa !important; }
+                .small { font-size: 10px; letter-spacing: 1px; font-weight: lighter; }
+                &-2 {
+                    width:20%;
+                }
+                &-3 {
+                    width:30%;
+                }
+                &-4 {
+                    width:40%;
+                }
+                &-5 {
+                    width:50%;
+                }
+                &-6 {
+                    width:60%;
+                }
+            }
+            &:hover {
+                .profiler-column { background: var(--dvt-primary-bg) !important; }
+            }
+        }
+    }
+    .highlight-method {
+        &-post {
+            color:var(--dv-method-post);
+        }
+        &-get {
+            color:var(--dv-method-get);
+        }
+        &-delete {
+            color:var(--dv-method-delete);
+        }
+        &-put {
+            color:var(--dv-method-put);
+        }
+        &-path {
+            color:var(--dv-method-path);
+        }
+        &-head {
+            color:var(--dv-method-head);
+        }
+    }
+    .opacity {
+        &-0 {
+            opacity:0;
+        }
+        &-30 {
+            opacity:0.3;
+        }
+        &-40 {
+            opacity:0.4;
+        }
+        &-50 {
+            opacity:0.5;
+        }
+        &-60 {
+            opacity:0.6;
+        }
+        &-80 {
+            opacity:0.8;
+        }
+        &-90 {
+            opacity:0.9;
+        }
+    }
 
     &.dark {
         --dvt-bg:#151f2c;
-        --dvt-color:rgba(108, 122, 145, 1);
-        --dvt-primary-bg:#182433;
+        --dvt-color:#a1abbd;
+        --dvt-primary-bg:#1f2e41;
+        --dvt-blue: #5879f1;
+        --dvt-red: #f58686;
+        --dv-method-post: #e89e0f;
+        --dv-method-get: #51e342;
+        --dv-method-delete: #ea2323;
+        --dv-method-put: #987b1c;
+        --dv-method-path:#987b1c;
+        --dv-method-head:var(--dvt-color);
         .devTools-sidebar-body {
             .box {
                 --bs-card-bg:#232f3d;
             }
+        }
+    }
+    &.vertical-right {
+        top: 0;
+        .tab-content {
+            height:~"calc(100% - 60px)";
+        }
+    }
+    &.horizontal {
+        --dvt-width:100%;
+        height:400px;
+        bottom:0;
+        .devTools-sidebar-body {
+            height:100%;
+            padding-bottom: 0;
+        }
+        .devTools-btn-action {
+            position: absolute;
+            z-index: 9999;
+            right: 20px;
+            top: 5px;
+        }
+        .tab-content {
+            height:~"calc(100% - 80px)";
         }
     }
 }

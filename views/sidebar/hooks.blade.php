@@ -16,6 +16,12 @@
                                         {{$function['function']}}
                                         <span class="hook-position">{{$position}}</span>
                                     </a>
+                                    @elseif($function['function'] instanceof \Closure)
+                                        <a>
+                                            <i class="fad fa-directions"></i>
+                                            Closure
+                                            <span class="hook-position">{{$position}}</span>
+                                        </a>
                                     @else
                                     <a>
                                         <i class="fad fa-directions"></i>

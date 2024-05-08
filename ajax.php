@@ -1,10 +1,11 @@
 <?php
-
 use JetBrains\PhpStorm\NoReturn;
+use SkillDo\Http\Request;
+use SkillDo\DevTool\Commands\Command;
 
 class DevToolAjax {
     #[NoReturn]
-    static function cacheClear(SkillDo\Request\HttpRequest $request, $model): void
+    static function cacheClear(Request $request): void
     {
         if($request->isMethod('post')) {
 
@@ -13,6 +14,9 @@ class DevToolAjax {
             }
 
             if($request->type == 'cache') {
+
+                $request->session()->remove('widgetReviewOptions');
+
                 CacheHandler::flush();
             }
 
@@ -23,7 +27,7 @@ class DevToolAjax {
     }
 
     #[NoReturn]
-    static function debugBar(SkillDo\Request\HttpRequest $request, $model): void
+    static function debugBar(Request $request): void
     {
         if($request->isMethod('post')) {
 
@@ -44,49 +48,9 @@ class DevToolAjax {
     }
 
     #[NoReturn]
-    static function debugBarAjax(SkillDo\Request\HttpRequest $request, $model): void
+    static function debugBarAjax(Request $request): void
     {
         if($request->isMethod('post')) {
-
-            function highlightSql($sql): array|string|null
-            {
-                $highlighted = preg_replace(
-                    ['/\bselect\b/', '/\bfrom\b/', '/\bwhere\b/', '/\band\b/', '/\bOR\b/', '/\bjoin\b/', '/\bINNER JOIN\b/', '/\bLEFT JOIN\b/', '/\bRIGHT JOIN\b/', '/\border by\b/', '/\bgroup by\b/', '/\blimit\b/'],
-                    ['<span style="color: blue;">SELECT</span>', '<span style="color: blue;">FROM</span>', '<span style="color: blue;">WHERE</span>', '<span style="color: blue;">AND</span>', '<span style="color: blue;">OR</span>', '<span style="color: blue;">JOIN</span>', '<span style="color: blue;">INNER JOIN</span>', '<span style="color: blue;">LEFT JOIN</span>', '<span style="color: blue;">RIGHT JOIN</span>', '<span style="color: blue;">ORDER BY</span>', '<span style="color: blue;">GROUP BY</span>', '<span style="color: blue;">LIMIT</span>'],
-                    $sql
-                );
-
-                // Highlight chuỗi trong dấu ``
-                return preg_replace('/`([^`]+)`/', '<span style="color: red;">`$1`</span>', $highlighted);
-            }
-
-            function interpolateQuery($query, array $params): array|string|null
-            {
-                $keys = array();
-                $values = $params;
-
-                //build a regular expression for each parameter
-                foreach ($params as $key => $value) {
-                    if (is_string($key)) {
-                        $keys[] = "/:" . $key . "/";
-                    } else {
-                        $keys[] = '/[?]/';
-                    }
-
-                    if (is_string($value))
-                        $values[$key] = "'" . $value . "'";
-
-                    if (is_array($value))
-                        $values[$key] = implode(',', $value);
-
-                    if (is_null($value))
-                        $values[$key] = 'NULL';
-                }
-
-                $query = preg_replace($keys, $values, $query, 1, $count);
-
-                return $query;
-            }
 
             $logs = [];
 
@@ -105,15 +69,15 @@ class DevToolAjax {
 
                         foreach ($log->queries as $q) {
                             $time = number_format($q->time/1000, 4);
-                            $query = interpolateQuery($q->query, $q->bindings);
-                            $logs[$log->action][] = ['sql' => highlightSql($query), 'time' => $time];
+                            $query = DevtoolHelper::interpolateQuery($q->query, $q->bindings);
+                            $logs[$log->action][] = ['sql' => DevtoolHelper::highlightSql($query), 'time' => $time];
                         }
                     }
                 }
             }
 
             response()->success('thành công!', [
-                'html' => base64_encode(Plugin::getBlade('Devtool/sidebar/views/debug-bar', 'ajax-queries', [
+                'html' => base64_encode(Plugin::partial('Devtool', 'views/debug-bar/ajax-queries', [
                     'ajax' => $logs
                 ]))
             ]);
@@ -123,7 +87,7 @@ class DevToolAjax {
     }
 
     #[NoReturn]
-    static function saveLayout(SkillDo\Request\HttpRequest $request, $model): void
+    static function saveLayout(Request $request): void
     {
         if($request->isMethod('post')) {
 
@@ -139,9 +103,91 @@ class DevToolAjax {
 
         response()->error('không thành công');
     }
+
+    #[NoReturn]
+    static function setting(Request $request): void
+    {
+        if($request->isMethod('post')) {
+
+            $name = $request->input('name');
+
+            $name = trim($name);
+
+            if(empty($name)) {
+                response()->error('name is empty!');
+            }
+
+            $value = $request->input('value');
+
+            $setting = Option::get('devtool_setting');
+
+            if(empty($setting)) {
+                $setting = [];
+            }
+
+            $setting[$name] = $value;
+
+            Option::update('devtool_setting', $setting);
+
+            response()->success(trans('ajax.save.success'));
+        }
+
+        response()->error('Error: setting save failed!');
+    }
+
+    #[NoReturn]
+    static function terminal(Request $request): void
+    {
+        if($request->isMethod('post')) {
+
+            $command = $request->input('command');
+
+            $command = trim($command);
+
+            if(empty($command)) {
+                response()->error('Error: command is empty!');
+            }
+
+            $commandSave = $command;
+
+            $command = explode(' ', $command);
+
+            $command = array_filter($command, fn($value) => !is_null($value) && $value !== '');
+
+            if(empty($command[0])) {
+                response()->error('Error: command is empty!');
+            }
+
+            $command[0] = strtolower($command[0]);
+
+            $terminal = Command::make($command);
+
+            if($terminal === false) {
+                response()->error($command[0].' : The term \''.$command[0].'\' is not recognized as a valid command. Check spelling of the name, or if a path is included, verify that the path is correct and try again.', [
+                    '+ '.$commandSave
+                ]);
+            }
+
+            if($terminal->paramCheck() === false) {
+                response()->error('Error: command parameter(s) is invalid. ', [
+                    '+ '.$commandSave
+                ]);
+            }
+
+            $terminal->run();
+
+            response()->error($command[0].' : The term \''.$command[0].'\' is not recognized as a valid command. Check spelling of the name, or if a path is included, verify that the path is correct and try again.', [
+                '+ '.$commandSave
+            ]);
+        }
+
+        response()->error('Error: command is not found');
+    }
 }
 
 Ajax::admin('DevToolAjax::cacheClear');
 Ajax::admin('DevToolAjax::debugBar');
 Ajax::admin('DevToolAjax::debugBarAjax');
 Ajax::admin('DevToolAjax::saveLayout');
+Ajax::admin('DevToolAjax::setting');
+Ajax::admin('DevToolAjax::terminal');

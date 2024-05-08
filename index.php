@@ -1,5 +1,7 @@
 <?php
-use SkillDo\Validate\MissingRequiredParameterException;
+
+use SkillDo\Validate\Rule;
+use SkillDo\Validate\Validate;
 
 /**
  * Plugin name : DevTool
@@ -9,6 +11,26 @@ use SkillDo\Validate\MissingRequiredParameterException;
  * Author       : SKDSoftware Dev Team
  * Version      : 1.0.0
  */
+use Illuminate\Database\Capsule\Manager as DB;
+
+function command_psr4_autoloader($class): void
+{
+    // replace namespace separators with directory separators in the relative
+    // class name, append with .php
+	if(str_starts_with($class, "SkillDo\DevTool\Commands\\")) {
+
+        $class = str_replace('SkillDo\DevTool\Commands\\', '', $class);
+
+        $file =  __DIR__ . '/commands/' . $class . '.php';
+
+        if (file_exists($file)) {
+            require_once $file;
+        }
+	}
+}
+
+spl_autoload_register('command_psr4_autoloader');
+
 class DevTool
 {
     static string $name = 'DevTool';
@@ -16,8 +38,10 @@ class DevTool
     function __construct()
     {
         include_once 'ajax.php';
-        include_once 'sidebar/sidebar.php';
-        include_once 'sidebar/debug.php';
+        include_once 'helper.php';
+        include_once 'sidebar.php';
+        include_once 'debug.php';
+        include_once 'terminal.php';
     }
 
     //active plugin
@@ -31,15 +55,11 @@ class DevTool
     {
     }
 
-    static function assets(Asset $assets): void
+    static function assets(AssetPosition $header, AssetPosition $footer): void
     {
-        $header = $assets->location('header');
-        $footer = $assets->location('footer');
         $node   = 'node_modules/';
         $header->add('icheck', $node.'icheck/skins/square/blue.css');
         $footer->add('iCheck', $node.'icheck/icheck.min.js');
-        $footer->add('form',   $node.'core/form.js');
-        $header->add('form',   Admin::asset()->path().'css/less/form.css');
     }
 
     static function config($key = null)
@@ -68,20 +88,10 @@ class DevTool
     }
 }
 
+if(Auth::check()) {
 
-add_action('theme_custom_assets', 'DevTool::assets');
+    add_action('theme_custom_assets', 'DevTool::assets', 10, 2);
 
-
-new DevTool();
-
-AdminMenu::add('devtool', 'Devtool', 'plugins?page=devtool', [
-    'callback' => 'devToolView', //function run
-]);
-
-/**
- * @throws MissingRequiredParameterException
- */
-function devToolView(): void
-{
-    show_r(session()->all());
+    new DevTool();
 }
+

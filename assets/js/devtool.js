@@ -1,15 +1,208 @@
+let empty = {
+	options: [],
+	args: []
+};
+
+function TerminalDevTool(){}
+
+TerminalDevTool.commands = {
+	'cms:version': empty,
+	'cms:lang:build': empty,
+	'cache:clear': empty,
+	'theme:db:run': empty,
+	'theme:db:create': empty,
+	'theme:child:copy': empty,
+	'pl': empty,
+	'plugin': empty,
+	'plugin:db:run': empty,
+	'plugin:db:create': empty,
+	'db:show': empty,
+	'db:table': empty
+}
+
+TerminalDevTool.echo = function(response, term) {
+	if(response.data?.type) {
+		if(response.data.type === 'plugins') {
+			TerminalDevTool.plugins(response.data.plugins, term)
+		}
+		if(response.data.type === 'plugin-info') {
+			TerminalDevTool.pluginInfo(response.data.plugin, term)
+		}
+	}
+	else {
+		term.echo(response.message, {newline: true});
+		response.data.map(function(message, index) {
+			term.echo(message, {newline: true});
+		})
+		term.resume();
+	}
+};
+
+TerminalDevTool.plugins = function(plugins, term) {
+
+	let data = [['Name', 'Active']];
+
+	Object.keys(plugins).map(function(value) {
+		data.push([value, plugins[value]]);
+	})
+
+	term.echo(ascii_table(data, true));
+
+	term.resume();
+};
+
+TerminalDevTool.pluginInfo = function(plugin, term) {
+
+	let data = [['Name', 'Value']];
+
+	Object.keys(plugin).map(function(value) {
+		data.push([value, plugin[value]]);
+	})
+
+	term.echo(ascii_table(data, true));
+
+	term.resume();
+};
+
+TerminalDevTool.errors = function(response, term) {
+	term.error(response.message, {newline: true});
+	response.data.map(function(message, index) {
+		term.error(message, {newline: true});
+	})
+	term.resume();
+};
+
+TerminalDevTool.color = function (name, string, bold = 'b') {
+	let colors = {
+		blue:   '#55f',
+		green:  '#59ebed',
+		grey:   '#999',
+		red:    '#A00',
+		yellow: '#FF5',
+		violet: '#6871ff',
+		white:  '#fff'
+	}
+	if (colors[name]) {
+		return '[['+bold+';' + colors[name] + ';]' + string + ']';
+	} else {
+		return string;
+	}
+}
+
+TerminalDevTool.autoCompletePath = function(command, callback) {
+	let input = command.split(" ").pop(); // Lấy phần cuối cùng của lệnh (tức là phần mà người dùng đang gõ)
+	let matches = [];
+
+	// Lặp qua các đường dẫn và tìm các đường dẫn khớp
+	for (var i = 0; i < TerminalDevTool.paths.length; i++) {
+		if (TerminalDevTool.paths[i].startsWith(input)) {
+			matches.push(TerminalDevTool.paths[i]);
+		}
+	}
+
+	// Gọi callback với danh sách các đường dẫn khớp
+	callback(matches);
+}
+
+TerminalDevTool.run = function (element) {
+
+	TerminalDevTool.commands['theme:child:copy'].args = $('#terminal-data').data('path-theme');
+
+	$(element).terminal(function(command, term) {
+
+		term.pause();
+
+		let data = {
+			action: 'DevToolAjax::terminal',
+			command: command
+		}
+
+		request.post(ajax, data).then(function(response) {
+
+			if(response.status === 'error') {
+				TerminalDevTool.errors(response, term)
+				return false;
+			}
+
+			TerminalDevTool.echo(response, term)
+		})
+
+	}, {
+		autocompleteMenu: true,
+		greetings: function () {
+			return [
+				TerminalDevTool.color('green', 'Cms SkillDo'),
+				TerminalDevTool.color('white', ' version '),
+				TerminalDevTool.color('yellow', '{{Cms::version()}}'),
+				'\n',
+				'Type command or access the link documentation for list commands'
+			].join('');
+		},
+		prompt: function(command, term) {
+			let url = domain.replace(/(^\w+:|^)\/\//, '');
+
+			url = url.replace(/\//g, '');
+
+			return [
+				TerminalDevTool.color('green', 'root&#64;'),
+				TerminalDevTool.color('violet', url),
+				TerminalDevTool.color('white', ' via '),
+				TerminalDevTool.color('violet', 'php-' + term.attr('data-php') + ':'),
+				TerminalDevTool.color('blue', '~/'),
+				'$ '
+			].join('');
+		},
+		completion: function() {
+			let term = this;
+			// return promise if completion need to be async
+			// in this example it's not needed, you can just retrun an array
+			return new Promise(function(resolve) {
+				let command = term.get_command();
+				let name = command.match(/^([^\s]*)/)[0];
+				let list = [];
+				if (name) {
+					let word = term.before_cursor(true);
+					if (name === word) {
+						list = Object.keys(TerminalDevTool.commands);
+					} else if (command.match(/\s/)) {
+						if (TerminalDevTool.commands[name]) {
+							list = TerminalDevTool.commands[name].args;
+						}
+					}
+				}
+				console.log(list);
+				resolve(list);
+			});
+		}
+	});
+}
+
 class DevToolSidebar {
 	constructor() {
 
 		this.sidebar = $('.devTools-sidebar');
 
+		this.sidebar.show()
+
+		this.open = localStorage.getItem('devTool-open')
+
+		if(this.open === 'true') {
+			this.sidebar.addClass('open')
+		}
+
 		this.theme = localStorage.getItem('devTool-theme')
 
-		console.log(this.theme)
-
 		if(this.theme) {
-			console.log(this.theme)
 			this.sidebar.addClass(this.theme)
+		}
+
+		this.layout = localStorage.getItem('devTool-layout')
+
+		if(this.layout) {
+			this.sidebar.addClass(this.layout)
+		}
+		else {
+			this.sidebar.addClass('horizontal')
 		}
 
 		this.tabElActive = localStorage.getItem('devTool-tab-active')
@@ -21,6 +214,7 @@ class DevToolSidebar {
 		this.event()
 	}
 	toggle() {
+		localStorage.setItem('devTool-open', !this.sidebar.hasClass('open'))
 		this.sidebar.toggleClass('open')
 		return false
 	}
@@ -42,9 +236,9 @@ class DevToolSidebar {
 			button.success()
 			SkilldoHelper.message.response(response);
 		})
-			.catch(function(error) {
-				button.success()
-			})
+		.catch(function(error) {
+			button.success()
+		})
 
 		return false
 	}
@@ -98,31 +292,59 @@ class DevToolSidebar {
 
 		return false;
 	}
-	themeDark(element) {
+	setTheme(element) {
 
 		let button = SkilldoHelper.buttonLoading(element);
 
 		button.loading()
 
-		this.sidebar.addClass('dark')
+		this.theme = element.attr('data-theme')
 
-		localStorage.setItem('devTool-theme', 'dark');
+		this.sidebar.removeClass('light')
+
+		this.sidebar.removeClass('dark')
+
+		this.sidebar.addClass(this.theme)
+
+		localStorage.setItem('devTool-theme', this.theme);
+
+		let data =  {
+			action: 'DevToolAjax::setting',
+			name: 'theme',
+			value: this.theme
+		}
+
+		request.post(ajax, data).then(function(response) {})
 
 		button.success();
 
 		return false;
 	}
-	themeLight(element) {
+	setLayout(element) {
 
 		let button = SkilldoHelper.buttonLoading(element);
 
 		button.loading()
 
-		this.sidebar.addClass('light')
+		this.layout = element.attr('data-layout')
 
-		this.sidebar.removeClass('dark')
+		this.sidebar.removeClass('vertical-right')
 
-		localStorage.setItem('devTool-theme', 'light');
+		this.sidebar.removeClass('vertical-left')
+
+		this.sidebar.removeClass('horizontal')
+
+		this.sidebar.addClass(this.layout)
+
+		localStorage.setItem('devTool-layout', this.layout);
+
+		let data =  {
+			action: 'DevToolAjax::setting',
+			name: 'layout',
+			value: this.layout
+		}
+
+		request.post(ajax, data).then(function(response) {})
 
 		button.success();
 
@@ -145,11 +367,11 @@ class DevToolSidebar {
 			.on('click', '.devTools-btn-cache', function () {
 				return self.cacheClear($(this));
 			})
-			.on('click', '.devTools-theme-dark', function () {
-				return self.themeDark($(this));
+			.on('click', '.devTools-btn-theme', function () {
+				return self.setTheme($(this));
 			})
-			.on('click', '.devTools-theme-light', function () {
-				return self.themeLight($(this));
+			.on('click', '.devTools-btn-layout', function () {
+				return self.setLayout($(this));
 			})
 			.on('click', '#devTools-debug-ajax', function () {
 				return self.debugBarAjax($(this));
@@ -161,5 +383,7 @@ class DevToolSidebar {
 }
 
 $(function(){
+	TerminalDevTool.run('.terminal')
+
 	new DevToolSidebar();
 });

@@ -3,7 +3,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class DebugBar {
 
-    protected string $view = 'DevTool/sidebar/views/debug-bar';
+    protected string $view = 'views/debug-bar';
 
     protected array $_available_sections = [
         'info',
@@ -59,48 +59,10 @@ class DebugBar {
     private function human_filesize($bytes): string
     {
         $sz = 'BKMGTP';
+
         $factor = floor((strlen($bytes) - 1) / 3);
-        return sprintf("%.2f", $bytes / pow(1024, $factor)) . @$sz[$factor];
-    }
 
-    private function highlightSql($sql): array|string|null
-    {
-        $highlighted = preg_replace(
-            ['/\bselect\b/', '/\bfrom\b/', '/\bwhere\b/', '/\band\b/', '/\bOR\b/', '/\bjoin\b/', '/\bINNER JOIN\b/', '/\bLEFT JOIN\b/', '/\bRIGHT JOIN\b/', '/\border by\b/', '/\bgroup by\b/', '/\blimit\b/'],
-            ['<span style="color: blue;">SELECT</span>', '<span style="color: blue;">FROM</span>', '<span style="color: blue;">WHERE</span>', '<span style="color: blue;">AND</span>', '<span style="color: blue;">OR</span>', '<span style="color: blue;">JOIN</span>', '<span style="color: blue;">INNER JOIN</span>', '<span style="color: blue;">LEFT JOIN</span>', '<span style="color: blue;">RIGHT JOIN</span>', '<span style="color: blue;">ORDER BY</span>', '<span style="color: blue;">GROUP BY</span>', '<span style="color: blue;">LIMIT</span>'],
-            $sql
-        );
-
-        // Highlight chuỗi trong dấu ``
-        return preg_replace('/`([^`]+)`/', '<span style="color: red;">`$1`</span>', $highlighted);
-    }
-
-    private function interpolateQuery($query, array $params): array|string|null
-    {
-        $keys = array();
-        $values = $params;
-
-        //build a regular expression for each parameter
-        foreach ($params as $key => $value) {
-            if (is_string($key)) {
-                $keys[] = "/:" . $key . "/";
-            } else {
-                $keys[] = '/[?]/';
-            }
-
-            if (is_string($value))
-                $values[$key] = "'" . $value . "'";
-
-            if (is_array($value))
-                $values[$key] = implode(',', $value);
-
-            if (is_null($value))
-                $values[$key] = 'NULL';
-        }
-
-        $query = preg_replace($keys, $values, $query, 1, $count);
-
-        return $query;
+        return sprintf("%.2f", $bytes / pow(1024, $factor)) . @$sz[(int)$factor];
     }
 
     protected function _compile_info(): array|string
@@ -120,11 +82,11 @@ class DebugBar {
             }
         }
 
-        return Plugin::getBlade($this->view, 'info', [
+        return Plugin::partial('DevTool', $this->view.'/info', [
             'profile'   => $profile,
             'class'     => $this->CI->router->fetch_class(),
             'method'    => $this->CI->router->fetch_method(),
-            'ram'       => (($usage = memory_get_usage()) != '' ? $this->human_filesize($usage) . ' bytes' : $this->CI->lang->line('profiler_no_memory'))
+            'ram'       => (($usage = memory_get_usage()) != '' ? $this->human_filesize($usage) . ' ' : $this->CI->lang->line('profiler_no_memory'))
         ]);
     }
 
@@ -146,13 +108,13 @@ class DebugBar {
 
                 $total += $q['time']/1000;
 
-                $query = $this->interpolateQuery($q['query'], $q['bindings']);
+                $query = DevtoolHelper::interpolateQuery($q['query'], $q['bindings']);
 
-                $dbs->queries[] = ['sql' => $this->highlightSql($query), 'time' => $time];
+                $dbs->queries[] = ['sql' => DevtoolHelper::highlightSql($query), 'time' => $time];
             }
         }
 
-        return Plugin::getBlade($this->view, 'queries', ['queries' => $dbs, 'total' => $total]);
+        return Plugin::partial('DevTool',$this->view. '/queries', ['queries' => $dbs, 'total' => $total]);
     }
 
     protected function _compile_ajax(): string
@@ -161,7 +123,7 @@ class DebugBar {
             unlink('uploads/devtool/query-log.txt');
         }
 
-        return Plugin::getBlade($this->view, 'ajax');
+        return Plugin::partial('DevTool',$this->view. '/ajax');
     }
 
     protected function _compile_request(): string
@@ -194,12 +156,12 @@ class DebugBar {
 
     protected function _compile_headers(): string
     {
-        return Plugin::getBlade($this->view, 'headers');
+        return Plugin::partial('DevTool',$this->view. '/headers');
     }
 
     protected function _compile_session(): string
     {
-        return Plugin::getBlade($this->view, 'session', ['session' => session()->all()]);
+        return Plugin::partial('DevTool',$this->view. '/session', ['session' => session()->all()]);
     }
 
     protected function _compile_options(): string
@@ -208,12 +170,13 @@ class DebugBar {
         $options = Option::getAll();
 
         foreach ($options as $key => $value) {
+
             if(Str::isSerialized($value)) {
-                $options[$key] = unserialize($value);
+                $options->$key = unserialize($value);
             }
         }
 
-        return Plugin::getBlade($this->view, 'options', ['options' => $options]);
+        return Plugin::partial('DevTool',$this->view. '/options', ['options' => $options]);
     }
 
     protected function _compile_files(): string
@@ -222,15 +185,14 @@ class DebugBar {
 
         sort($files);
 
-        return Plugin::getBlade($this->view, 'files', ['files' => $files]);
+        return Plugin::partial('DevTool',$this->view. '/files', ['files' => $files]);
     }
 
     protected function _compile_view(): string
     {
-
         $_ci_cached_vars = $this->CI->load->get_vars();
 
-        return Plugin::getBlade($this->view, 'views', ['data' => $_ci_cached_vars]);
+        return Plugin::partial('DevTool',$this->view.'/views', ['data' => $_ci_cached_vars]);
     }
 
     /**
