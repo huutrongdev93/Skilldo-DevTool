@@ -1,11 +1,13 @@
 <?php
 namespace SkillDo\DevTool\Commands;
 
+use SKDService;
+
 class CommandCmsVersion extends Command {
 
     public function paramCheck(): bool
     {
-        if(count($this->params) > 0) {
+        if(count($this->params) > 1) {
             return false;
         }
         return true;
@@ -13,9 +15,25 @@ class CommandCmsVersion extends Command {
 
     public function run(): void
     {
-        $this->status = 'success';
+        if($this->paramsCount == 0) {
 
-        $this->message = \Cms::version();
+            $this->status = 'success';
+
+            $this->message = \Cms::version();
+
+            $this->response();
+        }
+
+        if($this->params[0] == 'last') {
+
+            \Language::buildJs();
+
+            $this->status = 'success';
+
+            $this->message = SKDService::cms()->version();
+
+            $this->response();
+        }
 
         $this->response();
     }

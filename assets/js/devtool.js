@@ -6,18 +6,18 @@ let empty = {
 function TerminalDevTool(){}
 
 TerminalDevTool.commands = {
-	'cms:version': empty,
-	'cms:lang:build': empty,
-	'cache:clear': empty,
-	'theme:db:run': empty,
-	'theme:db:create': empty,
-	'theme:child:copy': empty,
-	'pl': empty,
-	'plugin': empty,
-	'plugin:db:run': empty,
-	'plugin:db:create': empty,
-	'db:show': empty,
-	'db:table': empty
+	'cms:version': {...empty},
+	'cms:lang:build': {...empty},
+	'cache:clear': {...empty},
+	'theme:db:run': {...empty},
+	'theme:db:create': {...empty},
+	'theme:child:copy': {...empty},
+	'pl': {...empty},
+	'plugin': {...empty},
+	'plugin:db:run': {...empty},
+	'plugin:db:create': {...empty},
+	'db:show': {...empty},
+	'db:table': {...empty}
 }
 
 TerminalDevTool.echo = function(response, term) {
@@ -106,7 +106,15 @@ TerminalDevTool.autoCompletePath = function(command, callback) {
 
 TerminalDevTool.run = function (element) {
 
-	TerminalDevTool.commands['theme:child:copy'].args = $('#terminal-data').data('path-theme');
+	let terminalDataElement = $('#terminal-data');
+
+	TerminalDevTool.commands['theme:child:copy'].args = terminalDataElement.data('path-theme');
+
+	let plugins = terminalDataElement.data('plugins');
+
+	TerminalDevTool.commands['plugin'].args = plugins;
+	TerminalDevTool.commands['plugin:db:run'].args = plugins;
+	TerminalDevTool.commands['plugin:db:create'].args = plugins;
 
 	$(element).terminal(function(command, term) {
 
@@ -170,7 +178,6 @@ TerminalDevTool.run = function (element) {
 						}
 					}
 				}
-				console.log(list);
 				resolve(list);
 			});
 		}
@@ -188,21 +195,6 @@ class DevToolSidebar {
 
 		if(this.open === 'true') {
 			this.sidebar.addClass('open')
-		}
-
-		this.theme = localStorage.getItem('devTool-theme')
-
-		if(this.theme) {
-			this.sidebar.addClass(this.theme)
-		}
-
-		this.layout = localStorage.getItem('devTool-layout')
-
-		if(this.layout) {
-			this.sidebar.addClass(this.layout)
-		}
-		else {
-			this.sidebar.addClass('horizontal')
 		}
 
 		this.tabElActive = localStorage.getItem('devTool-tab-active')

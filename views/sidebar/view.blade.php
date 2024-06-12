@@ -1,5 +1,5 @@
-{!! Plugin::partial('DevTool', 'views/terminal-data', ['themePaths' => $themePaths]) !!}
-<div class="devTools-sidebar {{ $setting['theme'].' '.$setting['layout'] }}" style="display: none">
+{!! Plugin::partial('DevTool', 'views/terminal-data', ['themePaths' => $themePaths, 'plugins' => $plugins]) !!}
+<div class="devTools-sidebar {{ $setting['theme'] ?? 'dark' }} {{ $setting['layout'] ?? 'horizontal' }}" style="display: none">
     <a class="devTools-btn-toggle" href="#"><i class="fad fa-cogs"></i></a>
     <div class="devTools-sidebar-body">
         <div class="devTools-header p-2">

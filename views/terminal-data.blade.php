@@ -6,4 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/ascii_table.js"></script>
 <script src="https://unpkg.com/jquery.terminal/js/autocomplete_menu.js"></script>
 
-<div id="terminal-data" data-path-theme="{!! htmlentities(json_encode($themePaths)) !!}"></div>
+<div id="terminal-data"
+     data-path-theme="{!! htmlentities(json_encode($themePaths)) !!}"
+     data-plugins="{!! htmlentities(json_encode($plugins)) !!}"
+></div>

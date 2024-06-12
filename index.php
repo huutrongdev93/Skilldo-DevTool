@@ -1,8 +1,4 @@
 <?php
-
-use SkillDo\Validate\Rule;
-use SkillDo\Validate\Validate;
-
 /**
  * Plugin name : DevTool
  * Plugin class : DevTool
@@ -11,8 +7,6 @@ use SkillDo\Validate\Validate;
  * Author       : SKDSoftware Dev Team
  * Version      : 1.0.0
  */
-use Illuminate\Database\Capsule\Manager as DB;
-
 function command_psr4_autoloader($class): void
 {
     // replace namespace separators with directory separators in the relative
@@ -55,13 +49,6 @@ class DevTool
     {
     }
 
-    static function assets(AssetPosition $header, AssetPosition $footer): void
-    {
-        $node   = 'node_modules/';
-        $header->add('icheck', $node.'icheck/skins/square/blue.css');
-        $footer->add('iCheck', $node.'icheck/icheck.min.js');
-    }
-
     static function config($key = null)
     {
         $devTool = Option::get('devToolConfig');
@@ -89,9 +76,6 @@ class DevTool
 }
 
 if(Auth::check()) {
-
-    add_action('theme_custom_assets', 'DevTool::assets', 10, 2);
-
     new DevTool();
 }
 
