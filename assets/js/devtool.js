@@ -215,7 +215,7 @@ class DevToolSidebar {
 	}
 	cacheClear(element) {
 
-		let button = SkilldoHelper.buttonLoading(element);
+		let button = SkilldoUtil.buttonLoading(element);
 
 		button.loading()
 
@@ -226,7 +226,7 @@ class DevToolSidebar {
 
 		request.post(ajax, data).then(function(response) {
 			button.success()
-			SkilldoHelper.message.response(response);
+			SkilldoMessage.response(response);
 		})
 		.catch(function(error) {
 			button.success()
@@ -236,7 +236,7 @@ class DevToolSidebar {
 	}
 	saveLayout(element) {
 
-		let button = SkilldoHelper.buttonLoading('button[form="devTools-form-layout"]');
+		let button = SkilldoUtil.buttonLoading('button[form="devTools-form-layout"]');
 
 		button.loading()
 
@@ -246,7 +246,7 @@ class DevToolSidebar {
 
 		request.post(ajax, data).then(function (response) {
 			button.success();
-			SkilldoHelper.message.response(response);
+			SkilldoMessage.response(response);
 		})
 			.catch(function (error) {
 				button.success();
@@ -258,7 +258,7 @@ class DevToolSidebar {
 
 		const self = this;
 
-		let button = SkilldoHelper.buttonLoading(element);
+		let button = SkilldoUtil.buttonLoading(element);
 
 		let data = element.serializeJSON();
 
@@ -270,7 +270,7 @@ class DevToolSidebar {
 
 			button.success();
 
-			SkilldoHelper.message.response(response);
+			SkilldoMessage.response(response);
 
 			response.data.html = decodeURIComponent(atob(response.data.html).split('').map(function (c) {
 				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -286,7 +286,7 @@ class DevToolSidebar {
 	}
 	setTheme(element) {
 
-		let button = SkilldoHelper.buttonLoading(element);
+		let button = SkilldoUtil.buttonLoading(element);
 
 		button.loading()
 
@@ -314,7 +314,7 @@ class DevToolSidebar {
 	}
 	setLayout(element) {
 
-		let button = SkilldoHelper.buttonLoading(element);
+		let button = SkilldoUtil.buttonLoading(element);
 
 		button.loading()
 
