@@ -108,6 +108,8 @@ TerminalDevTool.run = function (element) {
 
 	let terminalDataElement = $('#terminal-data');
 
+	let cmsVersion = terminalDataElement.data('cms-version');
+
 	TerminalDevTool.commands['theme:child:copy'].args = terminalDataElement.data('path-theme');
 
 	let plugins = terminalDataElement.data('plugins');
@@ -117,6 +119,11 @@ TerminalDevTool.run = function (element) {
 	TerminalDevTool.commands['plugin:db:create'].args = plugins;
 
 	$(element).terminal(function(command, term) {
+
+		if(command === 'close') {
+			TerminalDevTool.close();
+			return false;
+		}
 
 		term.pause();
 
@@ -141,9 +148,11 @@ TerminalDevTool.run = function (element) {
 			return [
 				TerminalDevTool.color('green', 'Cms SkillDo'),
 				TerminalDevTool.color('white', ' version '),
-				TerminalDevTool.color('yellow', '{{Cms::version()}}'),
+				TerminalDevTool.color('yellow', 'cmsVersion'),
 				'\n',
-				'Type command or access the link documentation for list commands'
+				'Type command or access the link documentation for list commands',
+				'\n',
+				'Use '+ TerminalDevTool.color('red', 'close') +' command to close the terminal'
 			].join('');
 		},
 		prompt: function(command, term) {
@@ -182,6 +191,19 @@ TerminalDevTool.run = function (element) {
 			});
 		}
 	});
+}
+
+TerminalDevTool.open = function(element) {
+	TerminalDevTool.run('.terminal')
+	let terminalWrapper = $('.devtool-terminal-wrapper');
+	terminalWrapper.addClass('open')
+	return false;
+}
+
+TerminalDevTool.close = function(element) {
+	let terminalWrapper = $('.devtool-terminal-wrapper');
+	terminalWrapper.removeClass('open')
+	return false;
 }
 
 class DevToolSidebar {
@@ -375,7 +397,7 @@ class DevToolSidebar {
 }
 
 $(function(){
-	TerminalDevTool.run('.terminal')
-
 	new DevToolSidebar();
+
+	$(document).on('click', '.devTools-btn-terminal', function () { return TerminalDevTool.open(); });
 });

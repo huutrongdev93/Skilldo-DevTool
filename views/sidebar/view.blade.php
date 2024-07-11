@@ -1,4 +1,3 @@
-{!! Plugin::partial('DevTool', 'views/terminal-data', ['themePaths' => $themePaths, 'plugins' => $plugins]) !!}
 <div class="devTools-sidebar {{ $setting['theme'] ?? 'dark' }} {{ $setting['layout'] ?? 'horizontal' }}" style="display: none">
     <a class="devTools-btn-toggle" href="#"><i class="fad fa-cogs"></i></a>
     <div class="devTools-sidebar-body">
@@ -24,9 +23,16 @@
                 !!}
                 {!!
                     Admin::button('red', [
-                        'text' => 'Xóa tất cả cache',
+                        'text' => 'Xóa cache',
                         'class' => 'devTools-btn-cache fw-bold text-uppercase',
                         'data-type' => 'cache'
+                    ])
+                !!}
+                {!!
+                    Admin::button('yellow', [
+                        'text' => 'Terminal',
+                        'class' => 'devTools-btn-terminal fw-bold text-uppercase',
+                        'data-type' => 'terminal'
                     ])
                 !!}
                 {!!
@@ -52,9 +58,6 @@
                     <button class="nav-link" id="devTools-btn-router" data-bs-toggle="tab" data-bs-target="#devTools-tab-router" type="button" role="tab">Router</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" id="devTools-btn-terminal" data-bs-toggle="tab" data-bs-target="#devTools-tab-terminal" type="button" role="tab">Terminal</button>
-                </li>
-                <li class="nav-item">
                     <button class="nav-link" id="devTools-btn-setting" data-bs-toggle="tab" data-bs-target="#devTools-tab-setting" type="button" role="tab">Setting</button>
                 </li>
             </ul>
@@ -77,18 +80,18 @@
             <div class="tab-pane h-full fade" id="devTools-tab-router" role="tabpanel" tabindex="0">
                 {!! Plugin::partial('DevTool', 'views/sidebar/router', ['routers' => $routers]) !!}
             </div>
-            <div class="tab-pane h-full fade" id="devTools-tab-terminal" role="tabpanel" tabindex="0">
-                {!! Plugin::partial('DevTool', 'views/sidebar/terminal') !!}
-            </div>
             <div class="tab-pane h-full fade" id="devTools-tab-setting" role="tabpanel" tabindex="0">
                 {!! Plugin::partial('DevTool', 'views/sidebar/setting') !!}
             </div>
         </div>
     </div>
 </div>
-<style>
-    {!! $css !!}
-</style>
-<script defer>
-    {!! $js !!}
-</script>
+{!!
+    Plugin::partial('DevTool', 'views/terminal', [
+        'id' => 'terminal',
+        'themePaths' => $themePaths,
+        'plugins' => $plugins
+    ]);
+!!}
+<style>{!! $css !!}</style>
+<script defer>{!! $js !!}</script>

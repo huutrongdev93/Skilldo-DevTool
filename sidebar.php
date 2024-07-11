@@ -11,6 +11,9 @@ class DevToolThemeSidebar {
         if(request()->ajax()) {
             exit(1);
         }
+        if(!Admin::isRoot()) {
+            exit(1);
+        }
 
         global $wp_filter;
 

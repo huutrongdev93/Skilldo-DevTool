@@ -41,6 +41,7 @@ class DevTool
     //active plugin
     public function active(): void
     {
+        Storage::makeDirectory('devtool');
         Option::update('devToolConfig', self::config());
     }
 
