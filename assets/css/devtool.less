@@ -30,14 +30,13 @@
     &.open {
         right: 0;
     }
-    .devTools-btn-toggle {
+    .devTools-btn-toggle, .devTools-btn-terminal {
         position: absolute;
         display: block;
         background:var(--dvt-bg);
         color: var(--dvt-primary);
         box-shadow: 0 0 15px 3px rgba(176,185,189,.3);
         border-radius: 8px 0 0 8px;
-        top: 50%;
         width: 50px;
         height: 50px;
         left: -50px;
@@ -46,6 +45,12 @@
         line-height: 50px;
         cursor: pointer;
         transition: all .3s ease;
+    }
+    .devTools-btn-toggle, .devTools-btn-terminal {
+        top: 50%;
+    }
+    .devTools-btn-terminal {
+        top: 44%;
     }
     .devTools-header {
         background-color: var(--dvt-primary-bg);
@@ -546,6 +551,39 @@
         }
         .tab-content {
             height:~"calc(100% - 80px)";
+        }
+    }
+}
+
+#devTools-tab-layout {
+    .layout-item {
+        overflow:hidden;
+        margin-bottom:15px;
+        cursor: pointer;
+        border-radius: 4px;
+        label{
+            cursor: pointer;
+            width:100%;
+            margin-bottom:0;
+            position:relative;
+        }
+        .img img {
+            width:100%;
+        }
+        .name {
+            background-color:#F3F4F6;
+            text-align:center;
+            font-size:10px;
+            padding: 4px 4px 4px 30px;
+        }
+        .form-check-input[type=radio] {
+            position: absolute;
+            left:33px;
+        }
+    }
+    @media (min-width: 992px) {
+        .col-lg-2 {
+            width: 25%;
         }
     }
 }

@@ -65,6 +65,10 @@ class Command {
             return new CommandCmsLangBuild($command);
         }
 
+        if($command[0] == 'cms:js:build') {
+            return new CommandCmsJsBuild($command);
+        }
+
         if($command[0] == 'cache:clear') {
             return new CommandCacheClear($command);
         }
@@ -86,6 +90,19 @@ class Command {
         //plugin command
         if($command[0] == 'pl' || $command[0] == 'plugin') {
             return new CommandPluginList($command);
+        }
+
+        //command plugin make
+        if($command[0] == 'plugin:create') {
+            return new CommandPluginCreate($command);
+        }
+
+        if($command[0] == 'plugin:activate') {
+            return new CommandPluginActivate($command);
+        }
+
+        if($command[0] == 'plugin:deactivate') {
+            return new CommandPluginDeactivate($command);
         }
 
         //command database run

@@ -91,11 +91,35 @@ class DevToolAjax {
     {
         if($request->isMethod('post')) {
 
-            $result = apply_filters('theme_setting_sidebar_save', ['status' => '']);
+            $layout 				= $request->input('layout');
 
-            if($result['status'] == 'error') {
+            $layout_home            = Str::clear($layout['home-layout']);
 
-                response()->error((!empty($result['message'])) ? $result['message'] : 'không thành công');
+            $layout_page            = Str::clear($layout['page-layout']);
+
+            $layout_post            = Str::clear($layout['post-layout']);
+
+            $layout_post_category   = Str::clear($layout['post-category-layout']);
+
+            $layout_list = Theme_Layout::list();
+
+            if(!empty($layout_home)) Option::update('layout_home', $layout_home );
+
+            if(isset($layout_list[$layout_page])) 			Option::update('layout_page', $layout_page );
+
+            if(isset($layout_list[$layout_post]))			Option::update('layout_post', $layout_post );
+
+            if(isset($layout_list[$layout_post_category])) 	Option::update('layout_post_category', $layout_post_category );
+
+            if(isset($layout['products-category-layout'])) {
+
+                $layout_products_category   = Str::clear($layout['products-category-layout']);
+
+                if(isset($layout_list[$layout_products_category])) 	Option::update('layout_products_category', $layout_products_category );
+
+                $layout_products   = Str::clear($layout['products-layout']);
+
+                Option::update('layout_products', $layout_products);
             }
 
             response()->success('thành công!');

@@ -1,12 +1,4 @@
 <?php
-/**
- * Plugin name : DevTool
- * Plugin class : DevTool
- * Plugin uri   : https://sikido.vn
- * Description  : Công cụ phát hành cho lập trình viên
- * Author       : SKDSoftware Dev Team
- * Version      : 1.0.0
- */
 function command_psr4_autoloader($class): void
 {
     // replace namespace separators with directory separators in the relative

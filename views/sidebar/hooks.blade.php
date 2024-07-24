@@ -1,4 +1,4 @@
-<div class="hook-list">
+<div class="hook-list" data-hooks="{!! htmlentities(json_encode($listHook)) !!}">
     @if(have_posts($listHook))
         @foreach ($listHook as $hookGroup)
             <div class="box">

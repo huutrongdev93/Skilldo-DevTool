@@ -14,10 +14,14 @@ TerminalDevTool.commands = {
 	'theme:child:copy': {...empty},
 	'pl': {...empty},
 	'plugin': {...empty},
+	'plugin:create': {...empty},
+	'plugin:activate': {...empty},
+	'plugin:deactivate': {...empty},
 	'plugin:db:run': {...empty},
 	'plugin:db:create': {...empty},
 	'db:show': {...empty},
-	'db:table': {...empty}
+	'db:table': {...empty},
+	'close': {...empty}
 }
 
 TerminalDevTool.echo = function(response, term) {
@@ -140,6 +144,9 @@ TerminalDevTool.run = function (element) {
 			}
 
 			TerminalDevTool.echo(response, term)
+		}).catch(function() {
+			term.echo('Lỗi chưa xác định', {newline: true});
+			term.resume();
 		})
 
 	}, {
@@ -148,7 +155,7 @@ TerminalDevTool.run = function (element) {
 			return [
 				TerminalDevTool.color('green', 'Cms SkillDo'),
 				TerminalDevTool.color('white', ' version '),
-				TerminalDevTool.color('yellow', 'cmsVersion'),
+				TerminalDevTool.color('yellow', cmsVersion),
 				'\n',
 				'Type command or access the link documentation for list commands',
 				'\n',

@@ -51,14 +51,14 @@
 .devTools-sidebar.open {
   right: 0;
 }
-.devTools-sidebar .devTools-btn-toggle {
+.devTools-sidebar .devTools-btn-toggle,
+.devTools-sidebar .devTools-btn-terminal {
   position: absolute;
   display: block;
   background: var(--dvt-bg);
   color: var(--dvt-primary);
   box-shadow: 0 0 15px 3px rgba(176, 185, 189, 0.3);
   border-radius: 8px 0 0 8px;
-  top: 50%;
   width: 50px;
   height: 50px;
   left: -50px;
@@ -67,6 +67,13 @@
   line-height: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+.devTools-sidebar .devTools-btn-toggle,
+.devTools-sidebar .devTools-btn-terminal {
+  top: 50%;
+}
+.devTools-sidebar .devTools-btn-terminal {
+  top: 44%;
 }
 .devTools-sidebar .devTools-header {
   background-color: var(--dvt-primary-bg);
@@ -594,5 +601,35 @@
 }
 .devTools-sidebar.horizontal .tab-content {
   height: calc(100% - 80px);
+}
+#devTools-tab-layout .layout-item {
+  overflow: hidden;
+  margin-bottom: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+#devTools-tab-layout .layout-item label {
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 0;
+  position: relative;
+}
+#devTools-tab-layout .layout-item .img img {
+  width: 100%;
+}
+#devTools-tab-layout .layout-item .name {
+  background-color: #F3F4F6;
+  text-align: center;
+  font-size: 10px;
+  padding: 4px 4px 4px 30px;
+}
+#devTools-tab-layout .layout-item .form-check-input[type=radio] {
+  position: absolute;
+  left: 33px;
+}
+@media (min-width: 992px) {
+  #devTools-tab-layout .col-lg-2 {
+    width: 25%;
+  }
 }
 /*# sourceMappingURL=devtool.css.map */

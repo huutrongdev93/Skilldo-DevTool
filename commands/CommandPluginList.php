@@ -1,6 +1,11 @@
 <?php
 namespace SkillDo\DevTool\Commands;
 
+use CacheHandler;
+use Language;
+use Plugin;
+use Template;
+
 class CommandPluginList extends Command {
 
     public function paramCheck(): bool

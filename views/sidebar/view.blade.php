@@ -1,5 +1,6 @@
-<div class="devTools-sidebar {{ $setting['theme'] ?? 'dark' }} {{ $setting['layout'] ?? 'horizontal' }}" style="display: none">
+<div class="devTools-sidebar {{ $setting['theme'] ?? 'dark' }} {{ $setting['layout'] ?? 'vertical' }}" style="display: none">
     <a class="devTools-btn-toggle" href="#"><i class="fad fa-cogs"></i></a>
+    <a class="devTools-btn-terminal" href="#"><i class="fa-duotone fa-solid fa-square-terminal"></i></a>
     <div class="devTools-sidebar-body">
         <div class="devTools-header p-2">
             <div class="d-flex align-items-center justify-content-between">
@@ -26,13 +27,6 @@
                         'text' => 'Xóa cache',
                         'class' => 'devTools-btn-cache fw-bold text-uppercase',
                         'data-type' => 'cache'
-                    ])
-                !!}
-                {!!
-                    Admin::button('yellow', [
-                        'text' => 'Terminal',
-                        'class' => 'devTools-btn-terminal fw-bold text-uppercase',
-                        'data-type' => 'terminal'
                     ])
                 !!}
                 {!!
@@ -65,7 +59,9 @@
         <div class="tab-content" id="devTools-tabs-content">
             <div class="tab-pane h-full fade show active" id="devTools-tab-layout" role="tabpanel" tabindex="0">
                 <form id="devTools-form-layout">
-                    @do_action('setting_sidebar_template')
+                    {!! Theme::partial('admin/theme-layout/html/layout-content', [
+                        'layoutList' => Theme_Layout::list()
+                    ]) !!}
                 </form>
                 <div class="devTools-sidebar-button">
                     <button form="devTools-form-layout" class="btn btn-red btn-block">{!! Admin::icon('save') !!} SAVE</button>
