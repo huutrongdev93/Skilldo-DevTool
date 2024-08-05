@@ -6,21 +6,40 @@ let empty = {
 function TerminalDevTool(){}
 
 TerminalDevTool.commands = {
+	'help': {...empty},
 	'cms:version': {...empty},
-	'cms:lang:build': {...empty},
+	'cms:build:js': {...empty},
 	'cache:clear': {...empty},
-	'theme:db:run': {...empty},
-	'theme:db:create': {...empty},
+	'cache:view': {...empty},
 	'theme:child:copy': {...empty},
-	'pl': {...empty},
+	'lang:build': {...empty},
 	'plugin': {...empty},
-	'plugin:create': {...empty},
 	'plugin:activate': {...empty},
 	'plugin:deactivate': {...empty},
-	'plugin:db:run': {...empty},
-	'plugin:db:create': {...empty},
 	'db:show': {...empty},
 	'db:table': {...empty},
+	'db:empty': {...empty},
+	'db:run:theme': {...empty},
+	'db:run:plugin': {...empty},
+	'make:db:theme': {...empty},
+	'make:db:plugin': {...empty},
+	'make:command': {...empty},
+	'make:plugin': {...empty},
+	'make:form-field:theme': {...empty},
+	'make:form-field:plugin': {...empty},
+	'make:macro:theme': {...empty},
+	'make:macro:plugin': {...empty},
+	'make:popover:theme': {...empty},
+	'make:popover:plugin': {...empty},
+	'make:validate:theme': {...empty},
+	'make:validate:plugin': {...empty},
+	'make:lang:theme': {...empty},
+	'make:lang:plugin': {...empty},
+	'make:widget': {...empty},
+	'make:widget:sidebar': {...empty},
+	'auth:logout': {...empty},
+	'user:password': {...empty},
+	'user:username': {...empty},
 	'close': {...empty}
 }
 
@@ -108,6 +127,29 @@ TerminalDevTool.autoCompletePath = function(command, callback) {
 	callback(matches);
 }
 
+TerminalDevTool.ajax = function(command, term) {
+
+	term.pause();
+
+	let data = {
+		action: 'DevToolAjax::terminal',
+		command: command
+	}
+
+	request.post(ajax, data).then(function(response) {
+
+		if(response.status === 'error') {
+			TerminalDevTool.errors(response, term)
+			return false;
+		}
+
+		TerminalDevTool.echo(response, term)
+	}).catch(function() {
+		term.echo('Lỗi chưa xác định', {newline: true});
+		term.resume();
+	})
+}
+
 TerminalDevTool.run = function (element) {
 
 	let terminalDataElement = $('#terminal-data');
@@ -119,8 +161,17 @@ TerminalDevTool.run = function (element) {
 	let plugins = terminalDataElement.data('plugins');
 
 	TerminalDevTool.commands['plugin'].args = plugins;
-	TerminalDevTool.commands['plugin:db:run'].args = plugins;
-	TerminalDevTool.commands['plugin:db:create'].args = plugins;
+	TerminalDevTool.commands['plugin:activate'].args = plugins;
+	TerminalDevTool.commands['plugin:deactivate'].args = plugins;
+
+	TerminalDevTool.commands['make:db:plugin'].args = plugins;
+	TerminalDevTool.commands['make:macro:plugin'].args = plugins;
+	TerminalDevTool.commands['make:popover:plugin'].args = plugins;
+	TerminalDevTool.commands['make:validate:plugin'].args = plugins;
+	TerminalDevTool.commands['make:form-field:plugin'].args = plugins;
+	TerminalDevTool.commands['make:lang:plugin'].args = plugins;
+
+	TerminalDevTool.commands['db:run:plugin'].args = plugins;
 
 	$(element).terminal(function(command, term) {
 
@@ -128,26 +179,28 @@ TerminalDevTool.run = function (element) {
 			TerminalDevTool.close();
 			return false;
 		}
-
-		term.pause();
-
-		let data = {
-			action: 'DevToolAjax::terminal',
-			command: command
+		else if(command === 'user:password') {
+			term.read('username: ').then(function(username) {
+				term.set_mask('*').read('Password: ').then(function(password) {
+					command = command + ' ' + username + ' ' + password;
+					term.set_mask(false);
+					TerminalDevTool.ajax(command, term)
+				});
+			});
+			return false;
 		}
-
-		request.post(ajax, data).then(function(response) {
-
-			if(response.status === 'error') {
-				TerminalDevTool.errors(response, term)
-				return false;
-			}
-
-			TerminalDevTool.echo(response, term)
-		}).catch(function() {
-			term.echo('Lỗi chưa xác định', {newline: true});
-			term.resume();
-		})
+		else if(command === 'user:username') {
+			term.read('username change: ').then(function(usernameOld) {
+				term.read('username new: ').then(function(username) {
+					command = command + ' ' + usernameOld + ' ' + username;
+					TerminalDevTool.ajax(command, term)
+				});
+			});
+			return false;
+		}
+		else {
+			TerminalDevTool.ajax(command, term)
+		}
 
 	}, {
 		autocompleteMenu: true,
@@ -189,7 +242,11 @@ TerminalDevTool.run = function (element) {
 					if (name === word) {
 						list = Object.keys(TerminalDevTool.commands);
 					} else if (command.match(/\s/)) {
-						if (TerminalDevTool.commands[name]) {
+						if (word.match(/^--/)) {
+							list = TerminalDevTool.commands[name].options.map(function(option) {
+								return '--' + option;
+							});
+						} else {
 							list = TerminalDevTool.commands[name].args;
 						}
 					}

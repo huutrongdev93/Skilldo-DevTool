@@ -39,7 +39,7 @@ class DevToolThemeSidebar {
             ];
         }
 
-        $routesBuilder = Luthier\RouteBuilder::$routes;
+        $routesBuilder = SkillDo\Route\RouteBuilder::$routes;
 
         $routes = [];
 

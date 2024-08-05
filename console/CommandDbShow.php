@@ -1,84 +1,72 @@
 <?php
-namespace SkillDo\DevTool\Commands;
+namespace SkillDo\DevTool\Console;
+use JetBrains\PhpStorm\NoReturn;
+use SkillDo\DevTool\Commands\Command;
 use Illuminate\Database\Capsule\Manager as DB;
 
-class CommandDbShow extends Command {
+class CommandDbShow extends Command
+{
+    protected string $signature = 'db:show';
 
-    public function paramCheck(): bool
+    protected string $description = 'Display information about the given database';
+
+    public function handle(): bool
     {
-        if(count($this->params) > 0) {
-            return false;
-        }
-        return true;
-    }
-
-    public function run(): void
-    {
-
-        $lines = [];
-
         $tables = DB::getSchemaBuilder()->getTables();
 
         $totalSize = 0;
 
         $output = model()->query("SHOW VARIABLES LIKE 'version'");
 
-        $lines[0] = $this->line([
+        $this->line('MySQL '.$output[0]->Value, 'green');
+
+        $this->line($this->renderLine([
             'start' => 'Database',
             'end' => CLE_DBNAME
-        ]);
+        ]));
 
-        $lines[1] = $this->line([
+        $this->line($this->renderLine([
             'start' => 'Host',
             'end' => CLE_DBHOST
-        ]);
+        ]));
 
-        $lines[2] = $this->line([
+        $this->line($this->renderLine([
             'start' => 'Port',
             'end' => 3306
-        ]);
+        ]));
 
-        $lines[3] = $this->line([
+        $this->line($this->renderLine([
             'start' => 'Tables',
             'end' => count($tables)
-        ]);
+        ]));
 
-        $lines[4] = '';
+        foreach ($tables as $table) {
+            $totalSize += $table['size'];
+        }
 
-        $lines[5] = $this->line([
+        $this->line($this->renderLine([
+            'start' => 'Total Size',
+            'end' => round($totalSize/(1024 * 1024), 2).' MiB',
+        ]));
+
+        $this->line($this->renderLine([
             'start' => 'Table',
             'color' => '[b;#00ee11;]',
             'end' => 'Size (MiB)'
-        ]);
+        ]));
 
         foreach ($tables as $table) {
 
-            $totalSize += $table['size'];
-
-            $lines[] = $this->line([
+            $this->line($this->renderLine([
                 'start' => $table['name'],
                 'end' => round($table['size']/(1024 * 1024), 2).' MiB',
-            ]);
+            ]));
         }
 
-        $lines[4] = $this->line([
-            'start' => 'Total Size',
-            'end' => round($totalSize/(1024 * 1024), 2).' MiB',
-        ]);
-
-        $this->status = 'success';
-
-        $this->message = $this->line([
-            'start' => 'MySQL '.$output[0]->Value,
-            'color' => '[b;#00ee11;]'
-        ]);
-
-        $this->data = $lines;
-
-        $this->response();
+        return self::SUCCESS;
     }
 
-    public function line($args): string
+    public function renderLine($args): string
     {
         $start = $args['start'];
 

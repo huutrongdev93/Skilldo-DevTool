@@ -1,129 +1,207 @@
 <?php
 namespace SkillDo\DevTool\Commands;
+use JetBrains\PhpStorm\NoReturn;
+use Str;
 
-class Command {
+interface CommandInterface
+{
+    public function run(): void;
+}
+
+class Command implements CommandInterface {
+
+    protected string $signature;
+
+    protected string $description;
+
+    protected array $arguments = [];
+
+    protected array $options = [];
 
     protected string $command;
 
-    protected array $params = [];
+    protected array $commandParams;
 
-    protected int $paramsCount = 0;
+    protected string $commandFull;
 
-    protected string $status = 'error';
+    protected SignatureParser $parser;
 
-    protected array $data = [];
+    protected Message $messages;
 
-    protected string $message = '';
+    const SUCCESS = true;
 
-    public function __construct($command) {
+    const ERROR = false;
 
-        $this->command = $command[0];
+    public function __construct($command = '') {
 
-        unset($command[0]);
-
-        if(have_posts($command)) {
-
-            $this->params = array_values($command);
-
-            $this->paramsCount = count($command);
+        if(empty($this->signature)) {
+            response()->error('Error: signature is empty. ', [
+                '+ '.$command
+            ]);
         }
-    }
 
-    public function paramCheck(): bool
-    {
-        return true;
+        $this->setCommand($command);
+
+        $this->parser = new SignatureParser($this->signature);
+
+        $this->messages = new Message();
     }
 
     public function fullCommand(): string
     {
-        return $this->command.' '.implode(' ', $this->params);
+        return $this->commandFull;
     }
 
-    public function response(): void
+    public function getCommand(): string
     {
-        if($this->status == 'error') {
-            if(empty($this->message)) {
-                $this->message = $this->command.' : The term \''.$this->command.'\' is not recognized as a valid command. Check spelling of the name, or if a path is included, verify that the path is correct and try again.';
-                $this->data[]  = '+ '.$this->fullCommand();
+        return $this->command;
+    }
+
+    public function setCommand($command): static
+    {
+        $this->commandFull = $command;
+
+        $this->commandParams = [];
+
+        $this->command = $command;
+
+        if(!empty($command)) {
+
+            $this->commandParams = explode(' ', $command);
+
+            $this->commandParams = array_filter($this->commandParams, fn($value) => !is_null($value) && $value !== '');
+
+            $this->command = strtolower($this->commandParams[0]);
+
+            array_shift($this->commandParams);
+        }
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description ?? '';
+    }
+
+    #[NoReturn]
+    public function run(): void
+    {
+        if (!$this->parser->validateInput($this->commandParams)) {
+            response()->error('Error: Invalid input. Please check the command signature. ', [
+                '+ '.$this->fullCommand()
+            ]);
+        }
+
+        $this->parser->parseArguments($this->commandParams);
+
+        $result = $this->handle();
+
+        if($result) {
+            $this->success();
+        }
+
+        $this->error();
+    }
+
+    public function argument($name)
+    {
+        return $this->parser->getArguments()[$name] ?? null;
+    }
+
+    public function signature(): string
+    {
+        return $this->parser->getSignature();
+    }
+
+    public function option($name)
+    {
+        return $this->parser->getOptions()[$name] ?? null;
+    }
+
+    public function handle(): bool
+    {
+        // Logic của command sẽ được cài đặt trong các class kế thừa
+        return self::SUCCESS;
+    }
+
+    public function line($message, string $color = ''): static
+    {
+        if(empty($color)) {
+            $this->messages->line($message);
+        }
+        if($color == 'green') {
+            $this->messages->green($message);
+        }
+        if($color == 'blue') {
+            $this->messages->blue($message);
+        }
+
+        return $this;
+    }
+
+    #[NoReturn]
+    public function success($message = null): void
+    {
+        if(!empty($message)) {
+            $this->messages->green($message);
+        }
+        $this->messages->success();
+    }
+
+    #[NoReturn]
+    public function error($message = null): void
+    {
+        if(!empty($message)) {
+            $this->messages->line($message);
+        }
+        $this->messages->error();
+    }
+
+    #[NoReturn]
+    static function make($command): void
+    {
+        $console = explode(' ', $command);
+
+        $console = array_filter($console, fn($value) => !is_null($value) && $value !== '');
+
+        if(empty($console[0])) {
+            response()->error('Error: command is empty!');
+        }
+
+        $storage = \Storage::disk('plugin');
+
+        $consolesFile = $storage->files('DevTool/console');
+
+        $terminal = false;
+
+        if(have_posts($consolesFile)) {
+
+            foreach ($consolesFile as $consoleFile) {
+                include_once 'views/plugins/'.$consoleFile;
             }
-            response()->error($this->message, $this->data);
+
+            $classes = get_declared_classes();
+
+            foreach ($classes as $class) {
+                if(Str::startsWith($class, 'SkillDo\DevTool\Console\\')) {
+                    $consoleObject = new $class($command);
+                    $signature = $consoleObject->signature();
+                    $signature = explode(' ', $signature);
+                    if(!empty($signature[0]) && $signature[0] == $console[0]) {
+                        $terminal = $consoleObject;
+                        break;
+                    }
+                }
+            }
         }
 
-        if($this->status == 'success') {
-            response()->success($this->message, $this->data);
-        }
-    }
-
-    static function make($command): mixed
-    {
-        //cms command
-        if($command[0] == 'cms:version') {
-            return new CommandCmsVersion($command);
+        if($terminal === false) {
+            response()->error($console[0].' : The term \''.$console[0].'\' is not recognized as a valid command. Check spelling of the name, or if a path is included, verify that the path is correct and try again.', [
+                '+ '.$command
+            ]);
         }
 
-        if($command[0] == 'cms:lang:build') {
-            return new CommandCmsLangBuild($command);
-        }
-
-        if($command[0] == 'cms:js:build') {
-            return new CommandCmsJsBuild($command);
-        }
-
-        if($command[0] == 'cache:clear') {
-            return new CommandCacheClear($command);
-        }
-
-        //theme command
-        if($command[0] == 'theme:db:run') {
-            return new CommandThemeDbRun($command);
-        }
-
-        //command database create
-        if($command[0] == 'theme:db:create') {
-            return new CommandThemeDbCreate($command);
-        }
-
-        if($command[0] == 'theme:child:copy') {
-            return new CommandThemeChildCopy($command);
-        }
-
-        //plugin command
-        if($command[0] == 'pl' || $command[0] == 'plugin') {
-            return new CommandPluginList($command);
-        }
-
-        //command plugin make
-        if($command[0] == 'plugin:create') {
-            return new CommandPluginCreate($command);
-        }
-
-        if($command[0] == 'plugin:activate') {
-            return new CommandPluginActivate($command);
-        }
-
-        if($command[0] == 'plugin:deactivate') {
-            return new CommandPluginDeactivate($command);
-        }
-
-        //command database run
-        if($command[0] == 'plugin:db:run') {
-            return new CommandPluginDbRun($command);
-        }
-
-        //command database create
-        if($command[0] == 'plugin:db:create') {
-            return new CommandPluginDbCreate($command);
-        }
-
-        //command database show
-        if($command[0] == 'db:show') {
-            return new CommandDbShow($command);
-        }
-
-        if($command[0] == 'db:table') {
-            return new CommandDbTable($command);
-        }
-
-        return false;
+        $terminal->run();
     }
 }

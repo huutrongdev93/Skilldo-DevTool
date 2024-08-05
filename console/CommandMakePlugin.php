@@ -1,20 +1,20 @@
 <?php
-namespace SkillDo\DevTool\Commands;
-
+namespace SkillDo\DevTool\Console;
+use SkillDo\DevTool\Commands\Command;
 use JetBrains\PhpStorm\NoReturn;
+use SkillDo\DevTool\Commands\Message;
 use Str;
 
-class CommandPluginCreate extends Command {
+class CommandMakePlugin extends Command
+{
+    protected string $signature = 'make:plugin {folder}';
 
-    public function paramCheck(): bool
-    {
-        return true;
-    }
+    protected string $description = 'Create new plugin folder';
 
     #[NoReturn]
-    public function run(): void
+    public function handle(): bool
     {
-        $folderName = trim($this->params[0]);
+        $folderName = $this->argument('folder');
 
         $folderName = Str::slug($folderName);
 
@@ -23,18 +23,19 @@ class CommandPluginCreate extends Command {
         $storage = \Storage::disk('plugin');
 
         if($storage->exists($folderName)) {
-            response()->error('Error: plugin folder '.$folderName.' is exits. ', [
-                '+ '.$this->fullCommand(),
-            ]);
+            $this->line('Error: plugin folder '.$folderName.' is exits.');
+            $this->line($this->fullCommand());
+            $this->line('folder name: '.$folderName);
+            return self::ERROR;
         }
 
         $samplePath = 'plugins/DevTool/sample/plugin/index.php';
 
         if(!file_exists('views/'.$samplePath)) {
-            response()->error('Error: file plugin sample not found.', [
-                '+ '.$this->fullCommand(),
-                '+ views/'.$samplePath,
-            ]);
+            $this->line('Error: file plugin sample not found.');
+            $this->line($this->fullCommand());
+            $this->line('+ views/'.$samplePath);
+            return self::ERROR;
         }
 
         if(!file_exists('views/'.$folder)) {
@@ -69,6 +70,13 @@ class CommandPluginCreate extends Command {
 
         $storage->put($folderName.'/plugin.json', $fileIndexContent);
 
-        response()->success('[[;#00ee11;]success!] plugin '.$pluginClassName.' is created [[;blue;]]');
+        $this->line(function (Message $message) use ($pluginClassName) {
+            $message->line('success!', 'green');
+            $message->line('plugin');
+            $message->line($pluginClassName, 'blue');
+            $message->line('is created');
+        });
+
+        return self::SUCCESS;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-function command_psr4_autoloader($class): void
+function devtool_command_psr4_autoloader($class): void
 {
     // replace namespace separators with directory separators in the relative
     // class name, append with .php
@@ -15,7 +15,7 @@ function command_psr4_autoloader($class): void
 	}
 }
 
-spl_autoload_register('command_psr4_autoloader');
+spl_autoload_register('devtool_command_psr4_autoloader');
 
 class DevTool
 {

@@ -172,37 +172,7 @@ class DevToolAjax {
                 response()->error('Error: command is empty!');
             }
 
-            $commandSave = $command;
-
-            $command = explode(' ', $command);
-
-            $command = array_filter($command, fn($value) => !is_null($value) && $value !== '');
-
-            if(empty($command[0])) {
-                response()->error('Error: command is empty!');
-            }
-
-            $command[0] = strtolower($command[0]);
-
-            $terminal = Command::make($command);
-
-            if($terminal === false) {
-                response()->error($command[0].' : The term \''.$command[0].'\' is not recognized as a valid command. Check spelling of the name, or if a path is included, verify that the path is correct and try again.', [
-                    '+ '.$commandSave
-                ]);
-            }
-
-            if($terminal->paramCheck() === false) {
-                response()->error('Error: command parameter(s) is invalid. ', [
-                    '+ '.$commandSave
-                ]);
-            }
-
-            $terminal->run();
-
-            response()->error($command[0].' : The term \''.$command[0].'\' is not recognized as a valid command. Check spelling of the name, or if a path is included, verify that the path is correct and try again.', [
-                '+ '.$commandSave
-            ]);
+            Command::make($command);
         }
 
         response()->error('Error: command is not found');
