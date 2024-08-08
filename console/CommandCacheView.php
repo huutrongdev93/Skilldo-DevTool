@@ -5,7 +5,7 @@ use JetBrains\PhpStorm\NoReturn;
 
 class CommandCacheView extends \SkillDo\DevTool\Commands\Command
 {
-    protected string $signature = 'cache::view';
+    protected string $signature = 'cache:view';
 
     protected string $description = 'Remove an item from the cache views';
 

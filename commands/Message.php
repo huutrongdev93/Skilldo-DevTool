@@ -14,7 +14,7 @@ class Message
 
     public function line($message, $color = null, $isBold = false): static
     {
-        if(is_string($message)) {
+        if(is_string($message) || is_numeric($message)) {
 
             if($color == 'green') {
                 return $this->green($message, $isBold);

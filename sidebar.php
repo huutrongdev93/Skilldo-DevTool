@@ -56,7 +56,7 @@ class DevToolThemeSidebar {
 
         if(empty($setting)) {
             $setting = [
-                'layout' => 'horizontal',
+                'layout' => 'vertical-right',
                 'theme' => 'dark'
             ];
         }

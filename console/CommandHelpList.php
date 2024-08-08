@@ -45,6 +45,16 @@ class CommandHelpList extends Command {
                     $consoles[$groups[0]][$command[0]] = $class->getDescription();
                 }
             }
+
+            if(have_posts($availableConsoles)) {
+                foreach ($availableConsoles as $key => $class) {
+                    if(!empty($consoles[$key])) {
+                        $consoles[$key][$key] = $class;
+                        unset($availableConsoles[$key]);
+                        ksort($consoles[$key]);
+                    }
+                }
+            }
         }
 
         ksort($consoles);

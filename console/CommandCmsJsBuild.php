@@ -65,6 +65,24 @@ class CommandCmsJsBuild extends Command
 
             $storage->put('assets/js/codemirror.bundle.js', $minifier->minify());
 
+
+            $libs = [
+                $node.'core/lang.js',
+                $node.'core/common.js',
+                $node.'core/http.js',
+                $node.'core/form.js',
+            ];
+
+            $minifier = new \MatthiasMullie\Minify\JS();
+
+            foreach($libs as $file) {
+                if(file_exists($file)) {
+                    $minifier->add($file);
+                }
+            }
+
+            $storage->put('assets/js/core.bundle.js', $minifier->minify());
+
             $this->line(function (Message $message) {
                 $message->green('success!');
                 $message->line('Build admin js file script.bundle.js');

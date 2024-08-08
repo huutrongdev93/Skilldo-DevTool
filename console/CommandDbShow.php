@@ -22,12 +22,12 @@ class CommandDbShow extends Command
 
         $this->line($this->renderLine([
             'start' => 'Database',
-            'end' => CLE_DBNAME
+            'end' => DB_DATABASE
         ]));
 
         $this->line($this->renderLine([
             'start' => 'Host',
-            'end' => CLE_DBHOST
+            'end' => DB_HOST
         ]));
 
         $this->line($this->renderLine([

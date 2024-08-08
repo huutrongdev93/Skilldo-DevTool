@@ -136,6 +136,9 @@ class Command implements CommandInterface {
         if($color == 'blue') {
             $this->messages->blue($message);
         }
+        if($color == 'yellow') {
+            $this->messages->blue($message);
+        }
 
         return $this;
     }

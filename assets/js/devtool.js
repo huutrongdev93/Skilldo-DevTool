@@ -19,6 +19,7 @@ TerminalDevTool.commands = {
 	'db:show': {...empty},
 	'db:table': {...empty},
 	'db:empty': {...empty},
+	'db:seed': {...empty},
 	'db:run:theme': {...empty},
 	'db:run:plugin': {...empty},
 	'make:db:theme': {...empty},
@@ -303,7 +304,7 @@ class DevToolSidebar {
 
 		let button = SkilldoUtil.buttonLoading(element);
 
-		button.loading()
+		button.start()
 
 		let data =  {
 			action: 'DevToolAjax::cacheClear',
@@ -311,11 +312,11 @@ class DevToolSidebar {
 		}
 
 		request.post(ajax, data).then(function(response) {
-			button.success()
+			button.stop()
 			SkilldoMessage.response(response);
 		})
 		.catch(function(error) {
-			button.success()
+			button.stop()
 		})
 
 		return false
@@ -324,18 +325,18 @@ class DevToolSidebar {
 
 		let button = SkilldoUtil.buttonLoading('button[form="devTools-form-layout"]');
 
-		button.loading()
+		button.start()
 
 		let data = element.serializeJSON();
 
 		data.action = 'DevToolAjax::saveLayout'
 
 		request.post(ajax, data).then(function (response) {
-			button.success();
+			button.stop();
 			SkilldoMessage.response(response);
 		})
 			.catch(function (error) {
-				button.success();
+				button.stop();
 			});
 
 		return false;
@@ -350,11 +351,11 @@ class DevToolSidebar {
 
 		data.action = 'DevToolAjax::debugBarAjax';
 
-		button.loading()
+		button.start()
 
 		request.post(ajax, data).then(function (response) {
 
-			button.success();
+			button.stop();
 
 			SkilldoMessage.response(response);
 
@@ -365,7 +366,7 @@ class DevToolSidebar {
 			self.sidebar.find('#ci_profiler_ajax .ci_profiler_ajax_query').html(response.data.html);
 		})
 		.catch(function (error) {
-			button.success();
+			button.stop();
 		});
 
 		return false;
@@ -374,7 +375,7 @@ class DevToolSidebar {
 
 		let button = SkilldoUtil.buttonLoading(element);
 
-		button.loading()
+		button.start()
 
 		this.theme = element.attr('data-theme')
 
@@ -392,9 +393,9 @@ class DevToolSidebar {
 			value: this.theme
 		}
 
-		request.post(ajax, data).then(function(response) {})
-
-		button.success();
+		request.post(ajax, data).then(function(response) {
+			button.stop();
+		})
 
 		return false;
 	}
@@ -402,7 +403,7 @@ class DevToolSidebar {
 
 		let button = SkilldoUtil.buttonLoading(element);
 
-		button.loading()
+		button.start()
 
 		this.layout = element.attr('data-layout')
 
@@ -422,9 +423,9 @@ class DevToolSidebar {
 			value: this.layout
 		}
 
-		request.post(ajax, data).then(function(response) {})
-
-		button.success();
+		request.post(ajax, data).then(function(response) {
+			button.stop();
+		})
 
 		return false;
 	}
@@ -463,5 +464,11 @@ class DevToolSidebar {
 $(function(){
 	new DevToolSidebar();
 
-	$(document).on('click', '.devTools-btn-terminal', function () { return TerminalDevTool.open(); });
+	$(document)
+		.on('click', '.devTools-btn-terminal', function () { return TerminalDevTool.open(); })
+		.on('keyup', function(e) {
+			if (e.key === "Escape") {
+				TerminalDevTool.close()
+			}
+		});
 });

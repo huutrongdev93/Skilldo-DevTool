@@ -98,7 +98,7 @@ class DebugBar {
 
         $this->CI->load->helper('text');
 
-        $dbs = (object)['queries' => [], 'database' => CLE_DBNAME];
+        $dbs = (object)['queries' => [], 'database' => DB_DATABASE];
 
         if (have_posts($databaseQuery)) {
 

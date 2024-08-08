@@ -6,7 +6,7 @@ use User;
 
 class CommandUserPassword extends Command {
 
-    protected string $signature = 'user::password {username} {password}';
+    protected string $signature = 'user:password {username} {password}';
 
     protected string $description = 'Change password a user';
 

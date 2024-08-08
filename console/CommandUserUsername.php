@@ -5,7 +5,7 @@ use User;
 
 class CommandUserUsername extends Command {
 
-    protected string $signature = 'user::username {usernameOld} {usernameNew}';
+    protected string $signature = 'user:username {usernameOld} {usernameNew}';
 
     protected string $description = 'Change username a user';
 

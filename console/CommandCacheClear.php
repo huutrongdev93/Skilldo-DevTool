@@ -5,7 +5,7 @@ use JetBrains\PhpStorm\NoReturn;
 
 class CommandCacheClear extends \SkillDo\DevTool\Commands\Command
 {
-    protected string $signature = 'cache::clear';
+    protected string $signature = 'cache:clear';
 
     protected string $description = 'Clear all cache files';
 
