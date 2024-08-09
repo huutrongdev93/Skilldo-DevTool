@@ -464,11 +464,23 @@ class DevToolSidebar {
 $(function(){
 	new DevToolSidebar();
 
-	$(document)
-		.on('click', '.devTools-btn-terminal', function () { return TerminalDevTool.open(); })
-		.on('keyup', function(e) {
-			if (e.key === "Escape") {
-				TerminalDevTool.close()
+	$(document).on('click', '.devTools-btn-terminal', function () { return TerminalDevTool.open(); });
+
+	document.addEventListener("keyup", function(e) {
+
+		if (e.key === "Escape") {
+			TerminalDevTool.close()
+		}
+
+		if(e.key === '`') {
+			if(e.ctrlKey) {
+				return TerminalDevTool.open();
 			}
-		});
+		}
+		if(e.key === 'f12') {
+			if(e.altKey) {
+				return TerminalDevTool.open();
+			}
+		}
+	});
 });
