@@ -43,7 +43,7 @@ class CommandPluginDeactivate extends Command
 
             if($plugin->deactivate()) {
 
-                CacheHandler::flush();
+                \SkillDo\Cache::flush();
 
                 Template::minifyClear();
 

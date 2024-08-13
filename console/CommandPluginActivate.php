@@ -72,7 +72,7 @@ class CommandPluginActivate extends Command
 
             if($plugin->active()) {
 
-                CacheHandler::flush();
+                \SkillDo\Cache::flush();
 
                 Template::minifyClear();
 

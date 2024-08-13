@@ -12,7 +12,7 @@ class CommandCacheClear extends \SkillDo\DevTool\Commands\Command
     #[NoReturn]
     public function handle(): bool
     {
-        \CacheHandler::flush();
+        \SkillDo\Cache::flush();
 
         $this->line('success!', 'green');
 

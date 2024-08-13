@@ -17,7 +17,7 @@ class DevToolAjax {
 
                 $request->session()->remove('widgetReviewOptions');
 
-                CacheHandler::flush();
+                \SkillDo\Cache::flush();
             }
 
             response()->success('thành công!');
