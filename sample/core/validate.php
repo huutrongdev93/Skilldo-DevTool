@@ -4,6 +4,8 @@ use SkillDo\Validate\Rule;
 
 class VALIDATE_CLASS_NAME extends Rule
 {
+    protected string $key = '';
+
     public function init(string $param1, string $param2): array
     {
         return [
