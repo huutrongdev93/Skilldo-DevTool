@@ -31,11 +31,11 @@ class CommandMakeColumnPlugin extends Command {
 
         $folder = 'plugins/'.$plugin;
 
-        return $this->creatFormFile($folder, $file);
+        return $this->creatFile($folder, $file);
 
     }
 
-    public function creatFormFile($folder, $file): bool
+    public function creatFile($folder, $file): bool
     {
         $path = $folder.'/core/Table/Columns/'.$file.'.php';
 

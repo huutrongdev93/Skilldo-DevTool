@@ -40,6 +40,7 @@ TerminalDevTool.commands = {
 	'make:column:plugin': {...empty},
 	'make:widget': {...empty},
 	'make:widget:sidebar': {...empty},
+	'make:taxonomy': {...empty},
 	'auth:logout': {...empty},
 	'user:password': {...empty},
 	'user:username': {...empty},
@@ -180,6 +181,15 @@ TerminalDevTool.run = function (element) {
 
 		if(command === 'close') {
 			TerminalDevTool.close();
+			return false;
+		}
+		else if(command === 'make:taxonomy') {
+			term.read('enter post type: ').then(function(postType) {
+				term.read('enter cate type: ').then(function(cateType) {
+					command = command + ' ' + postType + ' ' + cateType;
+					TerminalDevTool.ajax(command, term)
+				});
+			});
 			return false;
 		}
 		else if(command === 'user:password') {
@@ -468,7 +478,7 @@ $(function(){
 
 	$(document).on('click', '.devTools-btn-terminal', function () { return TerminalDevTool.open(); });
 
-	document.addEventListener("keyup", function(e) {
+	document.addEventListener("keydown", function(e) {
 
 		if (e.key === "Escape") {
 			TerminalDevTool.close()

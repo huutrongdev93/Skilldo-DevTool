@@ -15,17 +15,17 @@ class CommandMakeColumnTheme extends Command {
 
         if(!preg_match('/^[a-zA-Z0-9]+$/', $file)) {
             $this->line('Error: Tên class không hợp lệ');
-            $this->line($this->fullCommand());
-            $this->line('class name: '.$file);
+            $this->line('+ '.$this->fullCommand());
+            $this->line('+ class name: '.$file);
             return self::ERROR;
         }
 
         $folder = \Theme::name();
 
-        return $this->creatFormFile($folder, $file);
+        return $this->creatFile($folder, $file);
     }
 
-    public function creatFormFile($folder, $file): bool
+    public function creatFile($folder, $file): bool
     {
         $path = $folder.'/core/Table/Columns/'.$file.'.php';
 
