@@ -36,6 +36,8 @@ TerminalDevTool.commands = {
 	'make:validate:plugin': {...empty},
 	'make:lang:theme': {...empty},
 	'make:lang:plugin': {...empty},
+	'make:column:theme': {...empty},
+	'make:column:plugin': {...empty},
 	'make:widget': {...empty},
 	'make:widget:sidebar': {...empty},
 	'auth:logout': {...empty},

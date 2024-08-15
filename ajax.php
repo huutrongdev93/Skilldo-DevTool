@@ -54,6 +54,10 @@ class DevToolAjax {
 
             $logs = [];
 
+            if(!file_exists('uploads/devtool')) {
+                Storage::makeDirectory('devtool');
+            }
+
             if(file_exists('uploads/devtool/query-log.txt')) {
 
                 $logsRaw = file_get_contents('uploads/devtool/query-log.txt');
