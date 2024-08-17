@@ -42,7 +42,7 @@ class CommandDbSeed extends Command {
         return self::ERROR;
     }
 
-    public function generatePost($number)
+    public function generatePost($number): bool
     {
         $response = Http::withOptions(['verify' => false])->get('https://cms.sikido.vn/api/cms/data-fake/post');
 

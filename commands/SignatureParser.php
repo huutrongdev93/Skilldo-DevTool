@@ -25,7 +25,7 @@ class SignatureParser
 
         foreach ($matches as $match) {
 
-            $defaultValue = ($match[4] == "=") ? $match[5] : null;
+            $defaultValue = ($match[4] == "=") ? $match[5] : false;
 
             if ($match[1] === '--')
             {
@@ -44,15 +44,13 @@ class SignatureParser
 
     public function parseArguments(array $commandParams): void
     {
-        $isOption = true;
-
         $argumentsOrder = array_keys($this->arguments);
 
         while (!empty($commandParams)) {
 
             $arg = array_shift($commandParams);
 
-            if ($isOption && str_starts_with($arg, '--')) {
+            if (str_starts_with($arg, '--')) {
 
                 // Handle options
                 $optionParts = explode('=', substr($arg, 2), 2);
@@ -91,15 +89,12 @@ class SignatureParser
                     // Handle additional arguments if any
                     $this->arguments['extra'][] = $arg;
                 }
-
-                $isOption = false;
             }
         }
     }
 
     public function validateInput(array $commandParams): bool
     {
-
         if(empty($commandParams)) {
 
             $options = count(array_filter($this->options, fn($value) => $value === null));
@@ -125,15 +120,13 @@ class SignatureParser
 
         $argumentsParams = [];
 
-        $isOption = true;
-
         $argumentsOrder = array_keys($this->arguments);
 
         while (!empty($commandParams)) {
 
             $arg = array_shift($commandParams);
 
-            if ($isOption && str_starts_with($arg, '--')) {
+            if (str_starts_with($arg, '--')) {
 
                 // Handle options
                 $optionParts = explode('=', substr($arg, 2), 2);
@@ -143,7 +136,6 @@ class SignatureParser
                 if (isset($optionParts[1])) {
                     // Case: --option=value
                     $optionValue = $optionParts[1];
-
                 }
                 elseif (!empty($commandParams) && !str_starts_with($commandParams[0], '--')) {
                     // Case: --option value (next argument is a value)
@@ -172,8 +164,6 @@ class SignatureParser
                     // Handle additional arguments if any
                     $argumentsParams['extra'][] = $arg;
                 }
-
-                $isOption = false;
             }
         }
 

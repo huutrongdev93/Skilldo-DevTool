@@ -63,7 +63,7 @@ class CommandMakeAjax extends Command {
             return self::SUCCESS;
         }
 
-        $this->line('Error: Tạo file taxonomy thất bại kiểm tra lại quyền đọc ghi thư mục');
+        $this->line('Error: Tạo file ajax thất bại kiểm tra lại quyền đọc ghi thư mục');
 
         return self::ERROR;
     }

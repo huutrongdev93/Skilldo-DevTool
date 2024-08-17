@@ -32,15 +32,15 @@ class CommandMakeDatabaseTheme extends Command
 
         if(file_exists('views/'.$path)) {
             $this->line('Error: file database views/'.$path.' is exits.');
-            $this->line($this->fullCommand());
-            $this->line('views/'.$path);
+            $this->line('+ '.$this->fullCommand());
+            $this->line('+ views/'.$path);
             return self::ERROR;
         }
 
         if(!file_exists('views/'.$samplePath)) {
             $this->line('Error: file database sample not found.');
-            $this->line($this->fullCommand());
-            $this->line('views/'.$samplePath);
+            $this->line('+ '.$this->fullCommand());
+            $this->line('+ views/'.$samplePath);
             return self::ERROR;
         }
 
