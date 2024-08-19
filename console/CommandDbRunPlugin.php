@@ -15,7 +15,7 @@ class CommandDbRunPlugin extends Command
     {
         $plugin = $this->argument('plugin');
 
-        if(!preg_match('/^[a-zA-Z0-9-]+$/', $plugin)) {
+        if(!preg_match('/^[a-zA-Z0-9-_]+$/', $plugin)) {
             $this->line('Error: tên thư mục plugin không hợp lệ');
             $this->line('+ '.$this->fullCommand());
             $this->line('+ plugin: '.$plugin);
@@ -26,7 +26,7 @@ class CommandDbRunPlugin extends Command
 
         $file = ($file === null || $file === true) ? 'database' : $file;
 
-        if(!preg_match('/^[a-zA-Z0-9.-]+$/', $file)) {
+        if(!preg_match('/^[a-zA-Z0-9._-]+$/', $file)) {
             $this->line('Error: Tên file không hợp lệ');
             $this->line('+ '.$this->fullCommand());
             $this->line('+ file name: '.$file);

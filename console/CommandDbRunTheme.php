@@ -17,7 +17,7 @@ class CommandDbRunTheme extends Command
 
         $file = ($file === null || $file === true) ? 'database' : $file;
 
-        if(!preg_match('/^[a-zA-Z0-9.-]+$/', $file)) {
+        if(!preg_match('/^[a-zA-Z0-9._-]+$/', $file)) {
             $this->line('Error: Tên file không hợp lệ');
             $this->line($this->fullCommand());
             $this->line('file name: '.$file);

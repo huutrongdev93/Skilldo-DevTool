@@ -44,6 +44,7 @@ TerminalDevTool.commands = {
 	'make:ajax': {...empty},
 	'make:table': {...empty},
 	'make:model': {...empty},
+	'make:module': {...empty},
 	'auth:logout': {...empty},
 	'user:password': {...empty},
 	'user:username': {...empty},
@@ -195,9 +196,41 @@ TerminalDevTool.run = function (element) {
 			});
 			return false;
 		}
+		else if(command === 'make:module') {
+			term.read('enter module key: ').then(function(module) {
+				term.read('enter model class name: ').then(function(modelClassName) {
+					term.read('enter model table name: ').then(function(modelTableName) {
+
+						if(module.length == '') {
+							term.echo('module can\'t empty', {newline: true});
+							term.resume();
+							return false;
+						}
+
+						if(modelClassName.length == '') {
+							term.echo('model class name can\'t empty', {newline: true});
+							term.resume();
+							return false;
+						}
+
+						if(modelTableName.length == '') {
+							term.echo('model table name can\'t empty', {newline: true});
+							term.resume();
+							return false;
+						}
+
+						command = command.split(" ")[0];
+						command = command + ' ' + module + ' ' + modelClassName + ' ' + modelTableName;
+						TerminalDevTool.ajax(command, term)
+					});
+				});
+			});
+			return false;
+		}
 		else if(command === 'user:password') {
 			term.read('username: ').then(function(username) {
 				term.set_mask('*').read('Password: ').then(function(password) {
+					command = command.split(" ")[0];
 					command = command + ' ' + username + ' ' + password;
 					term.set_mask(false);
 					TerminalDevTool.ajax(command, term)
@@ -208,6 +241,7 @@ TerminalDevTool.run = function (element) {
 		else if(command === 'user:username') {
 			term.read('username change: ').then(function(usernameOld) {
 				term.read('username new: ').then(function(username) {
+					command = command.split(" ")[0];
 					command = command + ' ' + usernameOld + ' ' + username;
 					TerminalDevTool.ajax(command, term)
 				});

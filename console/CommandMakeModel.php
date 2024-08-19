@@ -58,7 +58,7 @@ class CommandMakeModel extends Command {
         //Kiểm tra nếu có tùy chọn tạo file db
         if(!is_null($db)) {
 
-            $dbName = $file.'_'.date('d_m_Y');
+            $dbName = $file.'-'.date('d-m-Y');
 
             $dbPath = $folder.'/database/'.$dbName.'.php';
 
