@@ -5,7 +5,7 @@ use SkillDo\DevTool\Commands\Message;
 
 class CommandMakeLangPlugin extends Command {
 
-    protected string $signature = 'make:lang:plugin {plugin} {locale} {file}';
+    protected string $signature = 'make:lang:plugin {plugin} {file}';
 
     protected string $description = 'Generates language translation';
 
@@ -20,15 +20,6 @@ class CommandMakeLangPlugin extends Command {
             return self::ERROR;
         }
 
-        $local = $this->argument('local');
-
-        if(!preg_match('/^[a-zA-Z0-9]+$/', $local)) {
-            $this->line('Error: locale không hợp lệ');
-            $this->line('+ '.$this->fullCommand());
-            $this->line('+ local: '.$local);
-            return self::ERROR;
-        }
-
         $file = $this->argument('file');
 
         if(!preg_match('/^[a-zA-Z0-9]+$/', $file)) {
@@ -38,48 +29,61 @@ class CommandMakeLangPlugin extends Command {
             return self::ERROR;
         }
 
-        $storage = \Storage::disk('views');
+        $storage = \Storage::disk('plugin');
 
-        $path = $plugin.'/language/'.$local.'/'.$file.'.php';
+        $samplePath = 'DevTool/sample/language.php';
 
-        if($storage->has($path)) {
-            $this->line('Error: file language '.$file.' is exits.');
-            $this->line('+ '.$this->fullCommand());
-            $this->line('+ views/'.$path);
-            return self::ERROR;
-        }
-
-        $samplePath = 'plugins/DevTool/sample/language.php';
-
-        if(!file_exists('views/'.$samplePath)) {
+        if(!$storage->has($samplePath)) {
             $this->line('Error: file language sample not found.');
             $this->line('+ '.$this->fullCommand());
-            $this->line('+ views/'.$samplePath);
             return self::ERROR;
         }
 
-        if(!file_exists('views/'.$plugin.'/language')) {
-            mkdir('views/'.$plugin.'/language', 0775);
-        }
+        $folder = $plugin;
 
-        if(!file_exists('views/'.$plugin.'/language/'.$local)) {
-            mkdir('views/'.$plugin.'/language/'.$local, 0775);
-        }
+        $languages = \Language::listKey();
 
         $fileSample = $storage->get($samplePath);
 
-        if($storage->put($path, $fileSample)) {
+        foreach ($languages as $local) {
 
-            $this->line(function (Message $message) use ($file) {
-                $message->line('success!', 'green');
-                $message->line('file translation '.$file.' is created');
-            });
+            $pathFolder = $folder.'/language/'.$local;
 
-            return self::SUCCESS;
+            $path = $pathFolder.'/'.$file.'.php';
+
+            if($storage->has($path)) {
+                $this->line('Error: file language '.$file.' is exits.');
+                $this->line('+ '.$this->fullCommand());
+                $this->line('+ views/'.$path);
+                return self::ERROR;
+            }
+            if(!$storage->has($pathFolder) && !$storage->makeDirectory($pathFolder)) {
+                $this->line('Error: folder language '.$pathFolder.' cannot be created');
+                $this->line('+ '.$this->fullCommand());
+                $this->line('+ views/'.$pathFolder);
+                return self::ERROR;
+            }
+            try {
+                if(!$storage->put($path, $fileSample)) {
+                    $this->line('Error: file language '.$file.' cannot be created.');
+                    $this->line('+ '.$this->fullCommand());
+                    $this->line('+ views/'.$path);
+                    return self::ERROR;
+                }
+            }
+            catch (\Exception $e) {
+                $this->line($e->getMessage());
+                $this->line('+ '.$this->fullCommand());
+                $this->line('+ views/'.$path);
+                return self::ERROR;
+            }
         }
 
-        $this->line('Error: Tạo file translation thất bại kiểm tra lại quyền đọc ghi thư mục');
+        $this->line(function (Message $message) use ($file) {
+            $message->line('success!', 'green');
+            $message->line('file translation '.$file.' is created');
+        });
 
-        return self::ERROR;
+        return self::SUCCESS;
     }
 }

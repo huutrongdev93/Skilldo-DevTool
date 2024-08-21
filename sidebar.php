@@ -73,6 +73,7 @@ class DevToolThemeSidebar {
                 !str_starts_with($path, 'theme-setting/theme-') &&
                 !str_starts_with($path, 'theme-setting/menu') &&
                 !str_starts_with($path, 'theme-child') &&
+                !str_starts_with($path, 'theme-custom') &&
                 !str_starts_with($path, 'widget/') &&
                 !str_starts_with($path, 'widget-sidebar/') &&
                 !str_contains($path, '.git/')
