@@ -11,6 +11,7 @@ TerminalDevTool.commands = {
 	'cms:build:js': {...empty},
 	'cache:clear': {...empty},
 	'cache:view': {...empty},
+	'cache:lang': {...empty},
 	'theme:child:copy': {...empty},
 	'lang:build': {...empty},
 	'plugin': {...empty},
