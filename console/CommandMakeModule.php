@@ -1,5 +1,6 @@
 <?php
 namespace SkillDo\DevTool\Console;
+use Cms;
 use SkillDo\DevTool\Commands\Command;
 use SkillDo\DevTool\Commands\Message;
 use Str;
@@ -157,6 +158,13 @@ class CommandMakeModule extends Command {
 
         //Model
         $modelContent = $storage->get('plugins/DevTool/sample/module/model.php');
+
+        if(version_compare(Cms::version(), '7.1.0', '<')) {
+            $modelContent = $storage->get('plugins/DevTool/sample/module/model.php');
+        }
+        else {
+            $modelContent = $storage->get('plugins/DevTool/sample/module/model-7.1.x.php');
+        }
 
         $modelContent = str_replace('MODULE_MODEL_NAME', $model, $modelContent);
 

@@ -1,5 +1,6 @@
 <?php
 namespace SkillDo\DevTool\Console;
+use Cms;
 use SkillDo\DevTool\Commands\Command;
 use SkillDo\DevTool\Commands\Message;
 
@@ -40,7 +41,12 @@ class CommandMakeModel extends Command {
             return self::ERROR;
         }
 
-        $samplePath = 'plugins/DevTool/sample/model.php';
+        if(version_compare(Cms::version(), '7.1.0', '<')) {
+            $samplePath = 'plugins/DevTool/sample/model.php';
+        }
+        else {
+            $samplePath = 'plugins/DevTool/sample/model-7.1.x.php';
+        }
 
         if(!file_exists('views/'.$samplePath)) {
             $this->line('Error: file model sample not found.');
