@@ -1,5 +1,6 @@
 <?php
 namespace SkillDo\DevTool\Console;
+use SkillDo\DB;
 use SkillDo\DevTool\Commands\Command;
 
 class CommandDbEmpty extends Command {
@@ -20,7 +21,7 @@ class CommandDbEmpty extends Command {
         }
         try {
 
-            model($table)->truncate();
+            DB::table($table)->truncate();
 
             $this->line('Empty table success');
 

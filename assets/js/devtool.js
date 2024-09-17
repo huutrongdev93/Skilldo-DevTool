@@ -46,6 +46,7 @@ TerminalDevTool.commands = {
 	'make:table': {...empty},
 	'make:model': {...empty},
 	'make:module': {...empty},
+	'make:middleware': {...empty},
 	'auth:logout': {...empty},
 	'user:password': {...empty},
 	'user:username': {...empty},

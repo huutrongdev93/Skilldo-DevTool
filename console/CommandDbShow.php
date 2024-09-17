@@ -1,8 +1,7 @@
 <?php
 namespace SkillDo\DevTool\Console;
-use JetBrains\PhpStorm\NoReturn;
+use SkillDo\DB;
 use SkillDo\DevTool\Commands\Command;
-use Illuminate\Database\Capsule\Manager as DB;
 
 class CommandDbShow extends Command
 {
