@@ -15,7 +15,7 @@ class CommandDbShow extends Command
 
         $totalSize = 0;
 
-        $output = model()->query("SHOW VARIABLES LIKE 'version'");
+        $output = DB::select("SHOW VARIABLES LIKE 'version'");
 
         $this->line('MySQL '.$output[0]->Value, 'green');
 

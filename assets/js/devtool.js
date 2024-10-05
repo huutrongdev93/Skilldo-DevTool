@@ -50,6 +50,8 @@ TerminalDevTool.commands = {
 	'auth:logout': {...empty},
 	'user:password': {...empty},
 	'user:username': {...empty},
+	'role:list': {...empty},
+	'role:cap': {...empty},
 	'close': {...empty}
 }
 
