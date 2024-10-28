@@ -25,7 +25,9 @@
                                     @else
                                     <a>
                                         <i class="fad fa-directions"></i>
-                                        class::{{get_class($function['function'][0])}} - Function:: {{$function['function'][1]}}
+                                        @if(is_string($function['function'][0]))
+                                        class::{{($function['function'][0])}} - Function:: {{$function['function'][1]}}
+                                        @endif
                                         <span class="hook-position">{{$position}}</span>
                                     </a>
                                     @endif
