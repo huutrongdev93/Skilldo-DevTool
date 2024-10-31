@@ -52,6 +52,8 @@ TerminalDevTool.commands = {
 	'user:username': {...empty},
 	'role:list': {...empty},
 	'role:cap': {...empty},
+	'license': {...empty},
+	'license:change': {...empty},
 	'close': {...empty}
 }
 
