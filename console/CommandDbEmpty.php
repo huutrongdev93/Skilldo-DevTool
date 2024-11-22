@@ -13,7 +13,7 @@ class CommandDbEmpty extends Command {
     {
         $table = $this->argument('table');
 
-        if(!preg_match('/^[a-zA-Z0-9]+$/', $table)) {
+        if(!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
             $this->line('Error: Tên table không hợp lệ');
             $this->line($this->fullCommand());
             $this->line('Table: '.$table);
