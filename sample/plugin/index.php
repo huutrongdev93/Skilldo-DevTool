@@ -11,3 +11,5 @@ class {{PLUGIN_CLASS_NAME}} {
     {
     }
 }
+
+include_once 'autoload/autoload.php';

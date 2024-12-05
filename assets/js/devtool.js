@@ -203,9 +203,9 @@ TerminalDevTool.run = function (element) {
 			return false;
 		}
 		else if(command === 'make:module') {
-			term.read('enter module key: ').then(function(module) {
-				term.read('enter model class name: ').then(function(modelClassName) {
-					term.read('enter model table name: ').then(function(modelTableName) {
+			term.read('Enter Module name: ').then(function(module) {
+				term.read('Enter Model class name: ').then(function(modelClassName) {
+					term.read('Enter database table name: ').then(function(modelTableName) {
 
 						if(module.length == '') {
 							term.echo('module can\'t empty', {newline: true});
@@ -220,7 +220,7 @@ TerminalDevTool.run = function (element) {
 						}
 
 						if(modelTableName.length == '') {
-							term.echo('model table name can\'t empty', {newline: true});
+							term.echo('database table name can\'t empty', {newline: true});
 							term.resume();
 							return false;
 						}

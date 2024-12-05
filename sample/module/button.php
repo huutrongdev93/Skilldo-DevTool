@@ -1,8 +1,7 @@
 <?php
 
-class AdminMODULE_CLASS_NAMEButton
+class MODULE_CLASS_NAMEAdminButton
 {
-    const MODULE = 'MODULE_KEY';
     /**
      * Thêm buttons action cho header của table
      * @param $buttons
@@ -11,7 +10,7 @@ class AdminMODULE_CLASS_NAMEButton
     static function tableHeaderButton($buttons): array
     {
         $buttons['add'] = Admin::button('add', [
-            'href' => 'admin/plugins/'.static::MODULE.'/add',
+            'href' => 'admin/plugins/MODULE_FOLDER/add',
             'text' => trans('button.add')
         ]);
 
@@ -27,15 +26,15 @@ class AdminMODULE_CLASS_NAMEButton
      */
     static function formButton($module): void
     {
-        $barUrl = Url::admin('plugins/'.static::MODULE);
+        $barUrl = Url::admin('plugins/MODULE_FOLDER');
         $buttons = [];
         $buttons[] = Admin::button('save', ['type' => 'submit', 'data-redirect' => $barUrl]);
         $buttons[] = Admin::button('back', ['href' => $barUrl]);
-        $buttons = apply_filters(static::MODULE.'_form_buttons', $buttons);
+        $buttons = apply_filters('MODULE_KEY_form_buttons', $buttons);
 
         Admin::view('include/form/form-action', ['buttons' => $buttons, 'module' => $module]);
     }
 }
 
-add_filter('table_MODULE_KEY_header_buttons', 'AdminMODULE_CLASS_NAMEButton::tableHeaderButton');
-add_action('form_MODULE_KEY_action_button', 'AdminMODULE_CLASS_NAMEButton::formButton');
+add_filter('table_MODULE_KEY_header_buttons', 'MODULE_CLASS_NAMEAdminButton::tableHeaderButton');
+add_action('form_MODULE_KEY_action_button', 'MODULE_CLASS_NAMEAdminButton::formButton');

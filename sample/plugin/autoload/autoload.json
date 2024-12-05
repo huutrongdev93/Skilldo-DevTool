@@ -1,0 +1,15 @@
+{
+    "folders" : [
+    ],
+    "files" : [
+    ],
+    "only-admin" : {
+        "folders" : [],
+        "files" : [
+        ]
+    },
+    "only-client" : {
+        "folders" : [],
+        "files"   : []
+    }
+}

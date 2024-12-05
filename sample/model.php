@@ -3,9 +3,9 @@ namespace SkillDo\Model;
 
 class MODEL_NAME extends Model {
 
-    static string $table = 'MODEL_TABLE';
+    protected string $table = 'MODEL_TABLE';
 
-    static array $columns = [];
+    protected array $columns = [];
 
-    static array $rules = [];
+    protected array $rules = [];
 }

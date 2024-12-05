@@ -1,4 +1,6 @@
 <?php
+namespace MODULE_CLASS_NAME\Admin;
+use Admin;
 use SkillDo\Form\Form;
 use SkillDo\Http\Request;
 use SkillDo\Table\Columns\ColumnCheckbox;
@@ -6,10 +8,16 @@ use SkillDo\Table\Columns\ColumnEdit;
 use SkillDo\Table\Columns\ColumnImage;
 use SkillDo\Table\Columns\ColumnText;
 use SkillDo\Table\SKDObjectTable;
+use Url;
+use Qr;
 
-class AdminMODULE_CLASS_NAMETable extends SKDObjectTable {
+class Table extends SKDObjectTable {
 
-    function get_columns() {
+    protected string $module = 'MODULE_KEY';
+
+    protected mixed $model = \SkillDo\Model\MODULE_MODEL_NAME::class;
+
+    function getColumns() {
 
         $this->_column_headers = [
             'cb'        => 'cb',
@@ -32,7 +40,6 @@ class AdminMODULE_CLASS_NAMETable extends SKDObjectTable {
             'action' => trans('table.action')
         ];
 
-
         $this->_column_headers = apply_filters( "manage_MODULE_KEY_columns", $this->_column_headers );
 
         return $this->_column_headers;
@@ -41,7 +48,7 @@ class AdminMODULE_CLASS_NAMETable extends SKDObjectTable {
     function actionButton($item, $module, $table): array
     {
         $buttons[] = Admin::button('blue', [
-            'href' => Url::admin('plugins/MODULE_KEY/edit/'.$item->id),
+            'href' => Url::admin('plugins/MODULE_FOLDER/edit/'.$item->id),
             'icon' => Admin::icon('edit')
         ]);
 
@@ -62,5 +69,17 @@ class AdminMODULE_CLASS_NAMETable extends SKDObjectTable {
     function headerSearch(Form $form, Request $request): Form
     {
         return apply_filters('admin_MODULE_KEY_table_form_search', $form, $request);
+    }
+
+    public function queryFilter(Qr $query, Request $request): Qr
+    {
+        return $query;
+    }
+
+    public function queryDisplay(Qr $query, Request $request, $data = []): Qr
+    {
+        $query = parent::queryDisplay($query, $request, $data);
+
+        return $query;
     }
 }

@@ -48,6 +48,7 @@ class CommandMakePlugin extends Command
             mkdir('views/'.$folder.'/language', 0775);
             mkdir('views/'.$folder.'/language/vi', 0775);
             mkdir('views/'.$folder.'/language/en', 0775);
+            mkdir('views/'.$folder.'/autoload', 0775);
         }
 
         //index.php
@@ -69,6 +70,19 @@ class CommandMakePlugin extends Command
         $fileIndexContent = str_replace('{{PLUGIN_NAME}}', $folderName, $fileIndexContent);
 
         $storage->put($folderName.'/plugin.json', $fileIndexContent);
+
+        //autoload
+        $fileAutoloadContent = $storage->get('DevTool/sample/plugin/autoload/autoload.json');
+
+        $storage->put($folderName.'/autoload/autoload.json', $fileAutoloadContent);
+
+        $fileAutoloadContent = $storage->get('DevTool/sample/plugin/autoload/autoload.php');
+
+        $fileAutoloadContent = str_replace('PLUGIN_CLASS_NAME', $pluginClassName, $fileAutoloadContent);
+
+        $fileAutoloadContent = str_replace('PLUGIN_NAME', $folderName, $fileAutoloadContent);
+
+        $storage->put($folderName.'/autoload/autoload.php', $fileAutoloadContent);
 
         $this->line(function (Message $message) use ($pluginClassName) {
             $message->line('success!', 'green');

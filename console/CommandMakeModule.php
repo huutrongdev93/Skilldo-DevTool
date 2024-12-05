@@ -49,8 +49,12 @@ class CommandMakeModule extends Command {
     {
         $storage = \Storage::disk('views');
 
+        $folderModule = Str::lower($module);
+
+        $folderModule = str_replace('_', '-', $folderModule);
+
         //Check module file
-        $pathModule = $folder.'/theme-custom/modules/'.$module.'/'.$module.'.module.php';
+        $pathModule = $folder.'/theme-custom/modules/'.$folderModule.'/'.$folderModule.'.module.php';
         if($storage->has($pathModule)) {
             $this->line('Error: file module views/'.$pathModule.' is exits.');
             $this->line('+ '.$this->fullCommand());
@@ -58,18 +62,9 @@ class CommandMakeModule extends Command {
             return self::ERROR;
         }
 
-        //Check ajax file
-        $pathAjax = $folder.'/theme-custom/modules/'.$module.'/'.$module.'.ajax.php';
-        if($storage->has($pathAjax)) {
-            $this->line('Error: file ajax views/'.$pathAjax.' is exits.');
-            $this->line('+ '.$this->fullCommand());
-            $this->line('+ views/'.$pathAjax);
-            return self::ERROR;
-        }
-
         //Check table file
-        $pathTable = $folder.'/theme-custom/modules/'.$module.'/'.$module.'.table.php';
-        if($storage->has($pathAjax)) {
+        $pathTable = $folder.'/theme-custom/modules/'.$folderModule.'/'.$folderModule.'.table.php';
+        if($storage->has($pathTable)) {
             $this->line('Error: file table views/'.$pathTable.' is exits.');
             $this->line('+ '.$this->fullCommand());
             $this->line('+ views/'.$pathTable);
@@ -77,7 +72,7 @@ class CommandMakeModule extends Command {
         }
 
         //Check button file
-        $pathButton = $folder.'/theme-custom/modules/'.$module.'/'.$module.'.button.php';
+        $pathButton = $folder.'/theme-custom/modules/'.$folderModule.'/'.$folderModule.'.button.php';
         if($storage->has($pathButton)) {
             $this->line('Error: file button views/'.$pathButton.' is exits.');
             $this->line('+ '.$this->fullCommand());
@@ -86,7 +81,7 @@ class CommandMakeModule extends Command {
         }
 
         //Check model file
-        $pathModel = $folder.'/theme-custom/modules/'.$module.'/'.$module.'.model.php';
+        $pathModel = $folder.'/theme-custom/modules/'.$folderModule.'/'.$folderModule.'.model.php';
         if($storage->has($pathModel)) {
             $this->line('Error: file model views/'.$pathModel.' is exits.');
             $this->line('+ '.$this->fullCommand());
@@ -102,8 +97,8 @@ class CommandMakeModule extends Command {
             return self::ERROR;
         }
 
-        if(!$storage->has($folder.'/theme-custom/modules/'.$module) && !$storage->makeDirectory($folder.'/theme-custom/modules/'.$module, 0775)) {
-            $this->line('Error: không tạo được thư mục modules/'.$module);
+        if(!$storage->has($folder.'/theme-custom/modules/'.$folderModule) && !$storage->makeDirectory($folder.'/theme-custom/modules/'.$folderModule, 0775)) {
+            $this->line('Error: không tạo được thư mục modules/'.$folderModule);
             $this->line('+ '.$this->fullCommand());
             return self::ERROR;
         }
@@ -111,10 +106,14 @@ class CommandMakeModule extends Command {
         //validate
         $module_class_name = Str::ucWord($module, '_');
 
+        $module_class_name = str_replace('_','', $module_class_name);
+
         //Module
         $moduleContent = $storage->get('plugins/DevTool/sample/module/module.php');
 
         $moduleContent = str_replace('MODULE_CLASS_NAME', $module_class_name, $moduleContent);
+
+        $moduleContent = str_replace('MODULE_FOLDER', $folderModule, $moduleContent);
 
         $moduleContent = str_replace('MODULE_KEY', $module, $moduleContent);
 
@@ -129,20 +128,11 @@ class CommandMakeModule extends Command {
 
         $tableContent = str_replace('MODULE_KEY', $module, $tableContent);
 
+        $tableContent = str_replace('MODULE_FOLDER', $folderModule, $tableContent);
+
         $tableContent = str_replace('MODULE_MODEL_NAME', $model, $tableContent);
 
         $tableContent = str_replace('MODULE_MODEL_TABLE', $table, $tableContent);
-
-        //Ajax
-        $ajaxContent = $storage->get('plugins/DevTool/sample/module/ajax.php');
-
-        $ajaxContent = str_replace('MODULE_CLASS_NAME', $module_class_name, $ajaxContent);
-
-        $ajaxContent = str_replace('MODULE_KEY', $module, $ajaxContent);
-
-        $ajaxContent = str_replace('MODULE_MODEL_NAME', $model, $ajaxContent);
-
-        $ajaxContent = str_replace('MODULE_MODEL_TABLE', $table, $ajaxContent);
 
         //Button
         $buttonContent = $storage->get('plugins/DevTool/sample/module/button.php');
@@ -151,6 +141,8 @@ class CommandMakeModule extends Command {
 
         $buttonContent = str_replace('MODULE_KEY', $module, $buttonContent);
 
+        $buttonContent = str_replace('MODULE_FOLDER', $folderModule, $buttonContent);
+
         $buttonContent = str_replace('MODULE_MODEL_NAME', $model, $buttonContent);
 
         $buttonContent = str_replace('MODULE_MODEL_TABLE', $table, $buttonContent);
@@ -158,13 +150,6 @@ class CommandMakeModule extends Command {
 
         //Model
         $modelContent = $storage->get('plugins/DevTool/sample/module/model.php');
-
-        if(version_compare(Cms::version(), '7.1.0', '<')) {
-            $modelContent = $storage->get('plugins/DevTool/sample/module/model.php');
-        }
-        else {
-            $modelContent = $storage->get('plugins/DevTool/sample/module/model-7.1.x.php');
-        }
 
         $modelContent = str_replace('MODULE_MODEL_NAME', $model, $modelContent);
 
@@ -192,42 +177,35 @@ class CommandMakeModule extends Command {
 
         //create file
         if(!$storage->put($pathModule, $moduleContent)) {
-            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$module);
+            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$folderModule);
             $this->line('Error: file module views/'.$pathModule.' not make.');
             $this->line('+ '.$this->fullCommand());
             return self::ERROR;
         }
 
-        if(!$storage->put($pathAjax, $ajaxContent)) {
-            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$module);
-            $this->line('Error: file ajax views/'.$pathAjax.' not make.');
-            $this->line('+ '.$this->fullCommand());
-            return self::ERROR;
-        }
-
         if(!$storage->put($pathTable, $tableContent)) {
-            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$module);
+            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$folderModule);
             $this->line('Error: file table views/'.$pathTable.' not make.');
             $this->line('+ '.$this->fullCommand());
             return self::ERROR;
         }
 
         if(!$storage->put($pathButton, $buttonContent)) {
-            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$module);
+            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$folderModule);
             $this->line('Error: file button views/'.$pathButton.' not make.');
             $this->line('+ '.$this->fullCommand());
             return self::ERROR;
         }
 
         if(!$storage->put($pathModel, $modelContent)) {
-            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$module);
+            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$folderModule);
             $this->line('Error: file model views/'.$pathModel.' not make.');
             $this->line('+ '.$this->fullCommand());
             return self::ERROR;
         }
 
         if(!$storage->put($pathDatabase, $dbContent)) {
-            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$module);
+            $storage->deleteDirectory($folder.'/theme-custom/modules/'.$folderModule);
             $this->line('Error: file database views/'.$pathDatabase.' not make.');
             $this->line('+ '.$this->fullCommand());
             return self::ERROR;

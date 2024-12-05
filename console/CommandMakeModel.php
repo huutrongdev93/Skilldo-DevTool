@@ -41,12 +41,7 @@ class CommandMakeModel extends Command {
             return self::ERROR;
         }
 
-        if(version_compare(Cms::version(), '7.1.0', '<')) {
-            $samplePath = 'plugins/DevTool/sample/model.php';
-        }
-        else {
-            $samplePath = 'plugins/DevTool/sample/model-7.1.x.php';
-        }
+        $samplePath = 'plugins/DevTool/sample/model.php';
 
         if(!file_exists('views/'.$samplePath)) {
             $this->line('Error: file model sample not found.');

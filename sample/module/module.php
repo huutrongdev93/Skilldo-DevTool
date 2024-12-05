@@ -2,18 +2,17 @@
 use SkillDo\Validate\Rule;
 use SkillDo\Http\Request;
 
-include_once 'MODULE_KEY.button.php';
+include_once 'MODULE_FOLDER.button.php';
 
-Class AdminMODULE_CLASS_NAME {
+Class MODULE_CLASS_NAMEAdmin {
     static function navigation(): void
     {
-        AdminMenu::add('MODULE_KEY', 'MODULE_KEY', 'plugins/MODULE_KEY', [
-            'callback' => 'AdminMODULE_CLASS_NAME::page', //function run
+        AdminMenu::add('MODULE_FOLDER', 'MODULE_KEY', 'plugins/MODULE_FOLDER', [
+            'callback' => 'MODULE_CLASS_NAMEAdmin::page', //function run
         ]);
     }
     static function page(Request $request, $params): void
     {
-
         $view = $params[0] ?? '';
 
         switch ($view) {
@@ -30,20 +29,12 @@ Class AdminMODULE_CLASS_NAME {
     }
     static function pageList(Request $request): void
     {
-        $table = new AdminMODULE_CLASS_NAMETable([
-            'items' => [],
-            'table' => 'MODULE_MODEL_TABLE',
-            'model' => model('MODULE_MODEL_TABLE'),
-            'module'=> 'MODULE_KEY',
-        ]);
+        $table = new MODULE_CLASS_NAME\Admin\Table();
 
         Admin::view('components/page-default/page-index', [
             'module'    => 'MODULE_KEY',
             'name'      => trans(''),
             'table'     => $table,
-            'tableId'     => 'admin_table_MODULE_KEY_list',
-            'limitKey'    => 'admin_MODULE_KEY_limit',
-            'ajax'        => 'AdminMODULE_CLASS_NAMEAjax::load',
         ]);
     }
     static function pageAdd(Request $request): void
@@ -77,23 +68,23 @@ Class AdminMODULE_CLASS_NAME {
     static function form(FormAdmin $form): FormAdmin {
         $form->lang
             ->addGroup('info', trans('form.group.info'))
-            ->addFieldLang('title', 'text', [
+            ->text('title', [
                 'label' => '',
                 'validations'   => [
                     Language::default() => Rule::make()->notEmpty()
                 ]
             ])
-            ->addFieldLang('excerpt', 'wysiwyg-short', ['label' => trans('form.info.excerpt')]);
+            ->wysiwygShort('excerpt', ['label' => trans('form.info.excerpt')]);
         $form->right
             ->addGroup('media', trans('form.group.media'))
-            ->addField('image', 'image', ['label' => trans('form.media.image')]);
+            ->image('image', ['label' => trans('form.media.image')]);
 
         $form->right
             ->addGroup('seo', 'Seo')
-            ->addField('slug', 'text', ['label' => 'Slug'])
-            ->addField('seo_title', 'text', ['label' => 'Meta title'])
-            ->addField('seo_keywords', 'text', ['label' => 'Meta Keyword'])
-            ->addField('seo_description', 'textarea', ['label' => 'Meta Description']);
+            ->text('slug', ['label' => 'Slug'])
+            ->text('seo_title', ['label' => 'Meta title'])
+            ->text('seo_keywords', ['label' => 'Meta Keyword'])
+            ->textarea('seo_description', ['label' => 'Meta Description']);
         return $form;
     }
     static function save($id, $insertData): int|SKD_Error
@@ -101,6 +92,6 @@ Class AdminMODULE_CLASS_NAME {
         return SkillDo\Model\MODULE_MODEL_NAME::insert($insertData);
     }
 }
-add_action('init', 'AdminMODULE_CLASS_NAME::navigation');
-add_filter('manage_MODULE_KEY_input', 'AdminMODULE_CLASS_NAME::form');
-add_filter('form_submit_MODULE_KEY', 'AdminMODULE_CLASS_NAME::save', 10, 2);
+add_action('init', 'MODULE_CLASS_NAMEAdmin::navigation');
+add_filter('manage_MODULE_KEY_input', 'MODULE_CLASS_NAMEAdmin::form');
+add_filter('form_submit_MODULE_KEY', 'MODULE_CLASS_NAMEAdmin::save', 10, 2);
