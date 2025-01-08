@@ -14,6 +14,8 @@ class CommandCacheClear extends \SkillDo\DevTool\Commands\Command
     {
         \SkillDo\Cache::flush();
 
+        \Template::minifyClear();
+
         $this->line('success!', 'green');
 
         return self::SUCCESS;
