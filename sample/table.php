@@ -9,7 +9,11 @@ use SkillDo\Table\SKDObjectTable;
 
 class TABLE_CLASS_NAME extends SKDObjectTable {
 
-    function get_columns() {
+    protected string $module = 'TABLE_NAME';
+
+    protected mixed $model = '';
+
+    function getColumns() {
 
         $this->_column_headers = [
             'cb'        => 'cb',
@@ -51,5 +55,25 @@ class TABLE_CLASS_NAME extends SKDObjectTable {
     function headerSearch(Form $form, Request $request): Form
     {
         return apply_filters('admin_TABLE_NAME_table_form_search', $form, $request);
+    }
+
+    public function queryFilter(Qr $query, \SkillDo\Http\Request $request): Qr
+    {
+        return $query;
+    }
+
+    public function queryDisplay(Qr $query, \SkillDo\Http\Request $request, $data = []): Qr
+    {
+        $query = parent::queryDisplay($query, $request, $data);
+
+        $query
+            ->orderBy('created', 'desc');
+
+        return $query;
+    }
+
+    public function dataDisplay($objects)
+    {
+        return $objects;
     }
 }
