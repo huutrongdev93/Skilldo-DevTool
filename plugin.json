@@ -1,0 +1,18 @@
+{
+    "name":"DevTool",
+    "class":"DevTool",
+    "url":"https://sikido.vn",
+    "description":"Công cụ phát hành cho lập trình viên",
+    "author":"SKDSoftware Dev Team",
+    "version":"2.1.0",
+    "thumb" : "assets/images/thumb.png",
+    "providers": [
+        "DevTool\\Providers\\DevToolServiceProvider"
+    ],
+    "autoload": {
+        "psr-4" : {
+            "DevTool\\Commands" : "app\\Commands",
+            "DevTool\\Console" : "app\\Console"
+        }
+    }
+}

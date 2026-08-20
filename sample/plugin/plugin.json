@@ -1,0 +1,20 @@
+{
+    "name" : "PLUGIN_NAME",
+    "class" : "PLUGIN_CLASS_NAME",
+    "url" : "https://sikido.vn",
+    "description" : "",
+    "author" : "SKDSoftware Dev Team",
+    "version" : "1.0.0",
+    "thumb" : "assets/images/thumb.png",
+    "providers": [
+    ],
+    "aliases": {
+        "controller" : {
+        }
+    },
+    "autoload": {
+        "alias": "PLUGIN_CLASS_NAME",
+        "psr-4": {
+        }
+    }
+}

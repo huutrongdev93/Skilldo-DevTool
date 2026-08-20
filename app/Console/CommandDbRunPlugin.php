@@ -1,0 +1,65 @@
+<?php
+namespace DevTool\Console;
+
+use DevTool\Commands\Command;
+use SkillDo\Support\Path;
+
+class CommandDbRunPlugin extends Command
+{
+    protected string $signature = 'db:run:plugin {plugin} {file=database}';
+
+    protected string $description = 'run migrations file in plugin';
+
+    
+    public function handle(): bool
+    {
+        $plugin = $this->argument('plugin');
+
+        if(!preg_match('/^[a-zA-Z0-9-_]+$/', $plugin))
+        {
+            $this->line('Error: tên thư mục plugin không hợp lệ');
+            $this->line('+ '.$this->fullCommand());
+            $this->line('+ plugin: '.$plugin);
+            return self::ERROR;
+        }
+
+        $file = $this->argument('file');
+
+        $file = ($file === null || $file === true) ? 'database' : $file;
+
+        if(!preg_match('/^[a-zA-Z0-9._-]+$/', $file))
+        {
+            $this->line('Error: Tên file không hợp lệ');
+            $this->line('+ '.$this->fullCommand());
+            $this->line('+ file name: '.$file);
+            return self::ERROR;
+        }
+
+        $path = Path::plugin(trim($plugin).'/database/'.$file.'.php');
+
+        if(!file_exists($path))
+        {
+            $this->line('Error: file database '.$path.' is not found.');
+            $this->line($this->fullCommand());
+            $this->line($path);
+            return self::ERROR;
+        }
+
+        try {
+
+            $database = include_once $path;
+
+            $database->up();
+
+            $this->line('success', 'green');
+
+            return self::SUCCESS;
+        }
+        catch(\Exception $e) {
+
+            $this->line($e->getMessage());
+
+            return self::ERROR;
+        }
+    }
+}
