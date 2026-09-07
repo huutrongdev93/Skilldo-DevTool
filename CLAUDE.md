@@ -77,4 +77,11 @@ Namespace PHP là `DevTool\*`. Class chính `DevTool` (không namespace, ở `in
 - **`Storage::disk('plugin')` và `disk('plugins')` cùng root** — cả hai đều hợp lệ, nhưng nên dùng `plugins` cho thống nhất.
 - **`SignatureParser` không ép tham số bắt buộc**: thiếu arg thì `argument()` trả `false`, không báo lỗi. Mọi lệnh phải tự `preg_match` kiểm tra và ép `(string)` trước khi so khớp.
 - **Log query ajax chưa có nguồn ghi**: `debugBarAjax` đọc `storage/uploads/devtool/query-log.txt` nhưng không chỗ nào ghi file này — panel Ajax sẽ luôn hiện trạng thái rỗng cho tới khi có logger.
-- **JS admin chạy từ bundle đã obfuscate**, sửa `assets/js/devtool.js` phải build lại (xem `cms:build:js`).
+- **`assets/js/devtool.js` KHÔNG qua bước build.** `DevToolThemeSidebar` nhúng thẳng bằng
+  `file_get_contents`, nên sửa là ăn ngay — nó không nằm trong `cms:build:js`. Nhớ cập nhật bảng
+  autocomplete `TerminalDevTool.commands` khi thêm/xoá lệnh hoặc option.
+- **`cms:build:js` cần node + `javascript-obfuscator`.** Lệnh gộp bằng `matthiasmullie/minify` rồi gọi
+  `node_modules/javascript-obfuscator` qua Symfony Process, cấu hình ở `obfuscator.config.json` gốc repo.
+  Máy chủ web thường không có `node` trong PATH → khai `NODE_BIN` trong `.env`. Thiếu node thì các gói vẫn
+  được ghi ở dạng đã rút gọn và lệnh chỉ cảnh báo. `--no-obfuscate` cho ra bản đọc được để dò lỗi.
+  Bảng gói build ở `CommandCmsJsBuild::bundles()`; chỉ mã của mình được làm rối, thư viện ngoài để nguyên.

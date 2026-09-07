@@ -12,7 +12,7 @@ TerminalDevTool.loadPromise = null;
 TerminalDevTool.commands = {
 	'help': {...empty},
 	'cms:version': {...empty},
-	'cms:build:js': {...empty},
+	'cms:build:js': {options: ['no-obfuscate'], args: []},
 	'cache:clear': {...empty},
 	'cache:view': {...empty},
 	'cache:lang': {...empty},
