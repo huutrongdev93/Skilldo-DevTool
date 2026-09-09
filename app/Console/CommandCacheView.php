@@ -13,20 +13,44 @@ class CommandCacheView extends \DevTool\Commands\Command
 
     public function handle(): bool
     {
-        $listCache = scandir(Path::storage('framework/views'));
+        //ViewResolver xếp file biên dịch vào thư mục con theo namespace
+        //(framework/views/sicommerce, .../theme, .../admin...). Bản cũ chỉ
+        //unlink ở tầng gốc nên không bao giờ dọn được những thư mục đó.
+        $total = $this->clear(Path::storage('framework/views'));
 
-        foreach ($listCache as $file)
-        {
-            if($file == '.') continue;
-            if($file == '..') continue;
-            unlink( Path::storage('framework/views').DIRECTORY_SEPARATOR.$file);
-        }
-
-        $this->line(function (\DevTool\Commands\Message $message) {
+        $this->line(function (\DevTool\Commands\Message $message) use ($total) {
             $message->green('success!');
-            $message->line('cache view is clear!');
+            $message->line('cache view is clear! ('.$total.' file)');
         });
 
         return self::SUCCESS;
+    }
+
+    protected function clear(string $dir): int
+    {
+        if(!is_dir($dir)) return 0;
+
+        $total = 0;
+
+        foreach (scandir($dir) as $file)
+        {
+            if($file == '.') continue;
+            if($file == '..') continue;
+
+            $path = $dir.DIRECTORY_SEPARATOR.$file;
+
+            if(is_dir($path))
+            {
+                $total += $this->clear($path);
+
+                //Bỏ lại thư mục rỗng: ViewResolver tự mkdir khi cần, nhưng xoá
+                //đi rồi tạo lại chỉ tổ hỏng quyền trên vài máy chủ.
+                continue;
+            }
+
+            if(@unlink($path)) $total++;
+        }
+
+        return $total;
     }
 }
