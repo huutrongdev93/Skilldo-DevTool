@@ -179,6 +179,13 @@ class DevToolAjax
 
     static function terminal(Request $request): void
     {
+        //Terminal chạy được make:*, db:*, role:* nên chỉ root, giống terminalData().
+        //Ẩn giao diện là chưa đủ: endpoint ajax vẫn gọi được bằng mọi tài khoản admin.
+        if(!Admin::isRoot())
+        {
+            response()->error(trans('ajax.error'));
+        }
+
         $command = $request->input('command');
 
         $command = trim($command);
