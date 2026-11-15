@@ -20,6 +20,12 @@ class DevToolAjax
 {
     static function cacheClear(Request $request): void
     {
+        //Chỉ root: ẩn nút trên giao diện chưa đủ, mọi tài khoản admin vẫn gọi được endpoint ajax.
+        if(!Admin::isRoot())
+        {
+            response()->error(trans('ajax.error'));
+        }
+
         if($request->type == 'minify')
         {
             Cache::delete('theme_custom_css_minify');
@@ -58,6 +64,12 @@ class DevToolAjax
 
     static function debugBar(Request $request): void
     {
+        //Chỉ root (đổi cấu hình debug của site).
+        if(!Admin::isRoot())
+        {
+            response()->error(trans('ajax.error'));
+        }
+
         $status = $request->input('status');
 
         if($status == 'on')
@@ -75,6 +87,12 @@ class DevToolAjax
 
     static function debugBarAjax(Request $request): void
     {
+        //Chỉ root: trả về câu SQL + bindings thật của site (dữ liệu debug nhạy cảm).
+        if(!Admin::isRoot())
+        {
+            response()->error(trans('ajax.error'));
+        }
+
         $logs = [];
 
         $storage = Storage::disk('uploads');
@@ -108,6 +126,12 @@ class DevToolAjax
 
     static function saveLayout(Request $request): void
     {
+        //Chỉ root: ghi thẳng option layout_* theo khoá do client gửi.
+        if(!Admin::isRoot())
+        {
+            response()->error(trans('ajax.error'));
+        }
+
         $layouts = $request->input('layout');
 
         foreach ($layouts as $pageKey => $page)
@@ -120,6 +144,12 @@ class DevToolAjax
 
     static function setting(Request $request): void
     {
+        //Chỉ root: ghi cấu hình DevTool theo name/value tuỳ ý.
+        if(!Admin::isRoot())
+        {
+            response()->error(trans('ajax.error'));
+        }
+
         $name = $request->input('name');
 
         $value = $request->input('value');
